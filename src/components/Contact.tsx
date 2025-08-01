@@ -306,7 +306,7 @@ const Contact: React.FC = () => {
                   }}
                 >
                   <iframe
-                    src="https://docs.google.com/forms/d/e/1FAIpQLSdegjdg_uPEwxTKPxJiLDmwWv8KZIhGCgPhfZNWuXNjvRHVxg/viewform?embedded=true"
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSdPNzlnnms0PjyEA4lJMcZYw1qoBxdO3GYyAx1gxONY3-XEAw/viewform?embedded=true"
                     width="100%"
                     height="100%"
                     frameBorder="0"
@@ -385,7 +385,7 @@ const Contact: React.FC = () => {
                 fontWeight: 600,
                 borderRadius: "50px",
                 backgroundColor: "white",
-                color: "primary.main",
+                color: "white",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
                 transition: "all 0.3s ease",
                 "&:hover": {

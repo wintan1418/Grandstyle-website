@@ -46,7 +46,7 @@ const Services = () => {
         "Transform your vision into reality with our expert planning services, creating events that perfectly reflect your style and needs.",
       longDescription:
         "Our comprehensive planning process begins with understanding your vision and objectives. We then craft a detailed roadmap covering every aspect of your event, from initial concept to final execution. Our team handles timeline development, budget management, vendor coordination, and all the small details that make your event exceptional.",
-      publicId: "services/Wedding Planning",
+      publicId: "gallery/Vibrant_African_Weddings_qlff08",
       color: "#00008B",
       category: "Planning",
       icon: <CalendarToday />,
@@ -63,7 +63,7 @@ const Services = () => {
         "Find the ideal venue that sets the tone for your event and let us handle the details to ensure a seamless experience.",
       longDescription:
         "The perfect venue is the foundation of a successful event. Our team researches and scouts locations that align with your vision, budget, and practical needs. We negotiate contracts, manage site visits, and coordinate all venue-related logistics to ensure the space works perfectly for your event requirements.",
-      publicId: "landing page/d9xqwbakv6xpze5wwgke",
+      publicId: "gallery/Corporate_Events_with_African_Flair_hvhrmz",
       color: "#900000",
       category: "Planning",
       icon: <LocationOn />,
@@ -80,7 +80,7 @@ const Services = () => {
         "Celebrate life's special moments with our custom birthday party planning, tailored to create lasting memories and pure joy.",
       longDescription:
         "From intimate gatherings to lavish celebrations, we design birthday experiences that reflect the personality and preferences of the guest of honor. Our services include theme development, activity planning, surprise coordination, and creating those special moments that will be remembered for years to come.",
-      publicId: "services/Birthday Parties",
+      publicId: "gallery/Memorable_Birthday_Bashes_nc02bb",
       color: "#40E0D0",
       category: "Events",
       icon: <People />,
@@ -386,7 +386,7 @@ const Services = () => {
                 fontWeight: 600,
                 borderRadius: "50px",
                 backgroundColor: "white",
-                color: "primary.main",
+                color: "white",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
                 transition: "all 0.3s ease",
                 "&:hover": {
