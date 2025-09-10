@@ -25,6 +25,10 @@ const cld = new Cloudinary({
 
 const itemData = [
   {
+    publicId: "gallery/burial_seremony_agw5rw",
+    title: "burial ceremony",
+  },
+  {
     publicId: "gallery/Nigerian Party",
     title: "Nigerian Party",
   },
@@ -103,7 +107,8 @@ const itemData = [
   {
     publicId: "gallery/skks75eufxbe6ee2itdi",
     title: "fun attendees",
-  }
+  },
+  
 ];
 
 const Gallery: React.FC = () => {

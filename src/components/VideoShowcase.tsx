@@ -52,11 +52,11 @@ const VideoShowcase = () => {
             <video
               ref={videoRef}
               className="w-full object-cover"
-              poster="https://res.cloudinary.com/wintan1418/image/upload/v1743956214/featured/tbedtisce2beqawzofg6.png"
+              poster="https://res.cloudinary.com/wintan1418/image/upload/v1754085289/gallery/Memorable_Birthday_Bashes_nc02bb.jpg"
               controls={isPlaying}
             >
               <source
-                src="https://res.cloudinary.com/wintan1418/video/upload/v1743953243/featured/mdcepdimny6gyvghaa5z.mp4"
+                src="https://res.cloudinary.com/wintan1418/video/upload/v1757499126/featured/GRAND_STYLE_IMASAYI_CANOPY_1_ajynib.mp4"
                 type="video/mp4"
               />
               Your browser does not support the video tag.

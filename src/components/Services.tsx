@@ -114,7 +114,7 @@ const Services = () => {
         "Make a bold statement with stunning decor that transforms any space, creating an unforgettable ambiance for your event.",
       longDescription:
         "Our design team creates immersive environments that bring your event vision to life. From concept development to installation, we handle every aspect of your event's visual identity. Services include theme development, floral arrangements, lighting design, furniture selection, and custom installations that create Instagram-worthy moments.",
-      publicId: "gallery/psuuqcthlvo75ltlymif",
+      publicId: "gallery/grandstyle_image_wk4u64",
       color: "#00008B",
       category: "Design",
       icon: <Palette />,
