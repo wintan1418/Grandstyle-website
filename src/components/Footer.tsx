@@ -236,12 +236,25 @@ const Footer: React.FC = () => {
                     <Link
                       key={index}
                       href={link.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const element = document.querySelector(link.href);
+                        if (element) {
+                          const offset = 70;
+                          const elementPosition = (element as HTMLElement).offsetTop - offset;
+                          window.scrollTo({
+                            top: elementPosition,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
                       sx={{
                         color: "rgba(255,255,255,0.8)",
                         textDecoration: "none",
                         fontSize: "1rem",
                         transition: "all 0.3s ease",
                         position: "relative",
+                        cursor: "pointer",
                         "&:hover": {
                           color: "#40E0D0",
                           transform: "translateX(8px)",

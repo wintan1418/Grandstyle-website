@@ -286,7 +286,8 @@ const Services = () => {
                   {/* Content Section */}
                   <Box sx={{ p: 3 }}>
                     <Typography
-                      variant="h6"
+                      component="h3"
+                      variant="h5"
                       sx={{
                         fontWeight: 700,
                         mb: 2,
@@ -305,7 +306,7 @@ const Services = () => {
                         lineHeight: 1.6,
                       }}
                     >
-                      {service.description}
+                      {service.description} Our experienced team works closely with clients to understand their unique needs and preferences, ensuring that every aspect of the service is tailored to create the perfect experience. We leverage our extensive network of trusted vendors and suppliers to deliver exceptional quality and value. Whether you're planning a small intimate gathering or a large-scale corporate event, our comprehensive approach ensures seamless execution from concept to completion.
                     </Typography>
 
                     <Button
@@ -354,7 +355,8 @@ const Services = () => {
             }}
           >
             <Typography
-              variant="h4"
+              component="h2"
+              variant="h3"
               sx={{
                 color: "white",
                 fontWeight: 700,
@@ -372,7 +374,7 @@ const Services = () => {
                 fontSize: { xs: "1rem", md: "1.25rem" },
               }}
             >
-              Let's discuss your vision and create something extraordinary together
+              Let's discuss your vision and create something extraordinary together. Learn more <a href="#about" style={{ color: '#40E0D0', textDecoration: 'underline', fontWeight: 600 }}>about our company</a> and our commitment to excellence, or <a href="#contact" style={{ color: '#40E0D0', textDecoration: 'underline', fontWeight: 600 }}>get in touch</a> with our team to start planning your event today.
             </Typography>
             <Button
               variant="contained"
@@ -500,6 +502,7 @@ const Services = () => {
                     </Box>
                     <Box>
                       <Typography
+                        component="h2"
                         variant="h4"
                         sx={{
                           fontWeight: 700,
@@ -536,7 +539,8 @@ const Services = () => {
 
                   {/* Features */}
                   <Typography
-                    variant="h6"
+                    component="h3"
+                    variant="h5"
                     sx={{
                       fontWeight: 600,
                       mb: 3,

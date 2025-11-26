@@ -60,6 +60,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         <Typography
+          component="h2"
           variant="h2"
           sx={{
             color: getColor(),

@@ -214,6 +214,7 @@ const Hero = () => {
 
                   {/* Main Title */}
                   <Typography
+                    component="h1"
                     variant="h1"
                     sx={{
                       color: "white",
@@ -240,6 +241,7 @@ const Hero = () => {
 
                   {/* Subtitle */}
                   <Typography
+                    component="p"
                     variant="h5"
                     sx={{
                       color: "rgba(255,255,255,0.95)",
@@ -270,10 +272,13 @@ const Hero = () => {
                       transition={{ duration: 0.5, delay: 0.3 }}
                     >
                       <Button
+                        component="a"
+                        href="#contact"
                         variant="contained"
                         size="large"
                         startIcon={<CalendarTodayIcon />}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           const element = document.getElementById("contact");
                           element?.scrollIntoView({ behavior: "smooth" });
                         }}
@@ -288,6 +293,7 @@ const Hero = () => {
                           textTransform: "none",
                           transition: "all 0.3s ease",
                           minWidth: { xs: 200, sm: 220, md: "auto" },
+                          textDecoration: "none",
                           "&:hover": {
                             transform: "translateY(-3px)",
                             boxShadow: "0 12px 48px rgba(220, 20, 60, 0.5)",

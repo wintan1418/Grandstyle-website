@@ -150,8 +150,13 @@ const Header: React.FC = () => {
             {/* Tablet Get Started Button */}
             <Box sx={{ display: { xs: "none", sm: "flex", md: "none" }, alignItems: "center", ml: "auto", mr: 2 }}>
               <Button
+                component="a"
+                href="#contact"
                 variant="contained"
-                onClick={() => scrollToSection("contact")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("contact");
+                }}
                 sx={{
                   px: 2.5,
                   py: 0.75,
@@ -162,6 +167,7 @@ const Header: React.FC = () => {
                   fontWeight: 600,
                   textTransform: "none",
                   transition: "all 0.3s ease",
+                  textDecoration: "none",
                   "&:hover": {
                     transform: "translateY(-2px)",
                     boxShadow: "0 6px 20px rgba(144, 0, 0, 0.4)",
@@ -183,7 +189,12 @@ const Header: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <Button
-                    onClick={() => scrollToSection(item)}
+                    component="a"
+                    href={`#${item.toLowerCase()}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(item);
+                    }}
                     sx={{
                       color: isScrolled ? "text.primary" : "white",
                       fontWeight: 500,
@@ -195,6 +206,7 @@ const Header: React.FC = () => {
                       overflow: "hidden",
                       transition: "all 0.3s ease",
                       textShadow: isScrolled ? "none" : "1px 1px 2px rgba(0,0,0,0.3)",
+                      textDecoration: "none",
                       "&:before": {
                         content: '""',
                         position: "absolute",
@@ -228,8 +240,13 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <Button
+                  component="a"
+                  href="#contact"
                   variant="contained"
-                  onClick={() => scrollToSection("contact")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("contact");
+                  }}
                   sx={{
                     ml: { md: 1, lg: 2 },
                     px: { md: 2, lg: 3 },
@@ -241,6 +258,7 @@ const Header: React.FC = () => {
                     fontWeight: 600,
                     textTransform: "none",
                     transition: "all 0.3s ease",
+                    textDecoration: "none",
                     "&:hover": {
                       transform: "translateY(-2px)",
                       boxShadow: "0 6px 20px rgba(144, 0, 0, 0.4)",
@@ -325,8 +343,13 @@ const Header: React.FC = () => {
                 >
                   <ListItem disablePadding sx={{ mb: 2 }}>
                     <Button
+                      component="a"
+                      href={`#${item.toLowerCase()}`}
                       fullWidth
-                      onClick={() => scrollToSection(item)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollToSection(item);
+                      }}
                       sx={{
                         justifyContent: "flex-start",
                         color: "text.primary",
@@ -336,6 +359,7 @@ const Header: React.FC = () => {
                         px: 3,
                         borderRadius: "15px",
                         transition: "all 0.3s ease",
+                        textDecoration: "none",
                         "&:hover": {
                           backgroundColor: "rgba(0, 0, 139, 0.05)",
                           color: "primary.main",
@@ -356,9 +380,14 @@ const Header: React.FC = () => {
             >
               <ListItem disablePadding sx={{ mt: 4 }}>
                 <Button
+                  component="a"
+                  href="#contact"
                   fullWidth
                   variant="contained"
-                  onClick={() => scrollToSection("contact")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("contact");
+                  }}
                   sx={{
                     py: 2,
                     borderRadius: "15px",
@@ -366,6 +395,7 @@ const Header: React.FC = () => {
                     fontSize: "1.1rem",
                     fontWeight: 600,
                     boxShadow: "0 4px 15px rgba(144, 0, 0, 0.3)",
+                    textDecoration: "none",
                     "&:hover": {
                       boxShadow: "0 6px 20px rgba(144, 0, 0, 0.4)",
                     },

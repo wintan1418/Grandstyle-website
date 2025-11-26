@@ -125,7 +125,8 @@ const Contact: React.FC = () => {
               viewport={{ once: true }}
             >
               <Typography
-                variant="h5"
+                component="h2"
+                variant="h3"
                 sx={{
                   fontWeight: 600,
                   mb: 4,
@@ -207,6 +208,42 @@ const Contact: React.FC = () => {
                           {detail}
                         </Typography>
                       ))}
+                      {item.title === "Call Us" && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "text.secondary",
+                            mt: 1,
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          Available Monday to Saturday, 9 AM - 6 PM WAT
+                        </Typography>
+                      )}
+                      {item.title === "Email Us" && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "text.secondary",
+                            mt: 1,
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          We typically respond within 24 hours
+                        </Typography>
+                      )}
+                      {item.title === "Visit Us" && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "text.secondary",
+                            mt: 1,
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          Schedule a consultation at any of our locations
+                        </Typography>
+                      )}
                     </Box>
                   </Paper>
                 </motion.div>
@@ -216,7 +253,8 @@ const Contact: React.FC = () => {
               <motion.div variants={itemVariants}>
                 <Box sx={{ mt: 4 }}>
                   <Typography
-                    variant="h6"
+                    component="h3"
+                    variant="h4"
                     sx={{
                       fontWeight: 600,
                       mb: 2,
@@ -285,14 +323,26 @@ const Contact: React.FC = () => {
                 }}
               >
                 <Typography
-                  variant="h5"
+                  component="h2"
+                  variant="h3"
                   sx={{
                     fontWeight: 600,
-                    mb: 3,
+                    mb: 2,
                     color: "primary.main",
                   }}
                 >
                   Request a Quote
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    mb: 3,
+                    fontSize: "0.95rem",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Fill out the form below to receive a personalized quote for your event. Our team will review your requirements and get back to you with a detailed proposal tailored to your needs and budget. Whether you're planning a wedding, corporate event, birthday celebration, or any special occasion, we're here to help bring your vision to life.
                 </Typography>
                 
                 <Box
@@ -354,7 +404,8 @@ const Contact: React.FC = () => {
             }}
           >
             <Typography
-              variant="h4"
+              component="h2"
+              variant="h3"
               sx={{
                 color: "white",
                 fontWeight: 700,
@@ -364,16 +415,16 @@ const Contact: React.FC = () => {
             >
               Ready to Make Your Event Unforgettable?
             </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "rgba(255,255,255,0.9)",
-                mb: 4,
-                fontSize: { xs: "1rem", md: "1.25rem" },
-              }}
-            >
-              We operate worldwide and are ready to bring your vision to life
-            </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: "rgba(255,255,255,0.9)",
+                      mb: 4,
+                      fontSize: { xs: "1rem", md: "1.25rem" },
+                    }}
+                  >
+                    We operate worldwide and are ready to bring your vision to life. With over 12 years of experience in event planning and management, Grandstyle Events has successfully organized over 500 events across Nigeria and internationally. Our team specializes in creating memorable experiences for weddings, corporate events, birthday celebrations, and cultural ceremonies. Whether you're planning an intimate gathering or a grand celebration, we provide comprehensive event planning services including venue selection, catering coordination, decor design, entertainment booking, and full event management. Learn more about our <a href="#services" style={{ color: '#40E0D0', textDecoration: 'underline', fontWeight: 600 }}>event planning services</a> and <a href="#about" style={{ color: '#40E0D0', textDecoration: 'underline', fontWeight: 600 }}>company background</a>. Contact us today to discuss your event needs and let us help you create an unforgettable experience.
+                  </Typography>
             <Button
               variant="contained"
               size="large"

@@ -220,6 +220,7 @@ const About = () => {
             <Grid item xs={12} md={6}>
               <motion.div variants={childVariant}>
                 <Typography
+                  component="h3"
                   variant="h3"
                   sx={{
                     color: aboutContent[activeTab].color,
@@ -232,17 +233,17 @@ const About = () => {
                   {aboutContent[activeTab].title}
                 </Typography>
 
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "text.primary",
-                    mb: 4,
-                    fontSize: { xs: "1rem", md: "1.125rem" },
-                    lineHeight: 1.8,
-                  }}
-                >
-                  {aboutContent[activeTab].content}
-                </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: "text.primary",
+                      mb: 4,
+                      fontSize: { xs: "1rem", md: "1.125rem" },
+                      lineHeight: 1.8,
+                    }}
+                  >
+                    {aboutContent[activeTab].content} Our commitment to excellence has earned us recognition as one of Nigeria's leading event planning companies. We understand that every event is unique, and we take pride in creating personalized experiences that reflect your vision and values. From initial consultation to final execution, our team works closely with you to ensure every detail is perfect. We maintain strong relationships with trusted vendors and suppliers, allowing us to deliver exceptional quality at competitive prices. Our comprehensive approach covers all aspects of event planning, including logistics coordination, timeline management, budget planning, and on-site supervision. With offices in Ondo, Lagos, and Abuja, we're well-positioned to serve clients across Nigeria and internationally. Explore our <a href="#services" style={{ color: aboutContent[activeTab].color, textDecoration: 'underline', fontWeight: 600 }}>comprehensive event planning services</a> or <a href="#contact" style={{ color: aboutContent[activeTab].color, textDecoration: 'underline', fontWeight: 600 }}>contact us</a> to discuss your event needs.
+                  </Typography>
 
                 {/* Accent Points */}
                 <Box sx={{ mb: 4 }}>
@@ -306,6 +307,7 @@ const About = () => {
               <Grid item xs={6} md={3} key={index}>
                 <Box sx={{ textAlign: "center" }}>
                   <Typography
+                    component="div"
                     variant="h3"
                     sx={{
                       color: "primary.main",
