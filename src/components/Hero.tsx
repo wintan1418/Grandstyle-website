@@ -412,6 +412,9 @@ const Hero = () => {
 
       {/* Scroll Indicator */}
       <Box
+        component="button"
+        onClick={scrollToNext}
+        aria-label="Scroll to next section"
         sx={{
           position: "absolute",
           bottom: 30,
@@ -422,8 +425,10 @@ const Hero = () => {
           flexDirection: "column",
           alignItems: "center",
           cursor: "pointer",
+          border: "none",
+          background: "transparent",
+          padding: 0,
         }}
-        onClick={scrollToNext}
       >
         <Typography
           variant="body2"
@@ -451,6 +456,7 @@ const Hero = () => {
                 color: "#40E0D0",
               },
             }}
+            aria-hidden="true"
           />
         </motion.div>
       </Box>

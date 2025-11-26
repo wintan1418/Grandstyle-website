@@ -192,6 +192,7 @@ const Footer: React.FC = () => {
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Follow us on ${social.name}`}
                         sx={{
                           background: typeof social.color === "string" && social.color.includes("gradient")
                             ? social.color
@@ -408,6 +409,7 @@ const Footer: React.FC = () => {
             
             <Button
               onClick={scrollToTop}
+              aria-label="Scroll to top of page"
               sx={{
                 minWidth: "auto",
                 width: 40,
@@ -423,7 +425,7 @@ const Footer: React.FC = () => {
                 },
               }}
             >
-              <ArrowUpward />
+              <ArrowUpward aria-hidden="true" />
             </Button>
           </Box>
         </Box>

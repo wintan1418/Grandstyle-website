@@ -54,20 +54,29 @@ const VideoShowcase = () => {
               className="w-full object-cover"
               poster="https://res.cloudinary.com/wintan1418/image/upload/v1754085289/gallery/Memorable_Birthday_Bashes_nc02bb.jpg"
               controls={isPlaying}
+              aria-label="Grandstyle Events highlight reel showcasing memorable events"
             >
               <source
                 src="https://res.cloudinary.com/wintan1418/video/upload/v1757499126/featured/GRAND_STYLE_IMASAYI_CANOPY_1_ajynib.mp4"
                 type="video/mp4"
               />
+              <track
+                kind="captions"
+                srcLang="en"
+                label="English captions"
+                src=""
+                default
+              />
               Your browser does not support the video tag.
             </video>
 
             {!isPlaying && (
-              <motion.div
+              <motion.button
                 initial={{ opacity: 0.8 }}
                 whileHover={{ opacity: 1, scale: 1.05 }}
                 onClick={handleVideoPlay}
-                className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30"
+                className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30 border-0"
+                aria-label="Play video showcase"
               >
                 <motion.div
                   whileHover={{ scale: 1.1 }}
@@ -79,9 +88,10 @@ const VideoShowcase = () => {
                       color: "white",
                       filter: "drop-shadow(0 0 8px rgba(0,0,0,0.4))",
                     }}
+                    aria-hidden="true"
                   />
                 </motion.div>
-              </motion.div>
+              </motion.button>
             )}
           </div>
 

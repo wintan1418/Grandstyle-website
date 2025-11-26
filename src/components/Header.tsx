@@ -274,7 +274,7 @@ const Header: React.FC = () => {
             {/* Mobile Menu Button */}
             <IconButton
               color="inherit"
-              aria-label="open drawer"
+              aria-label="Open navigation menu"
               edge="end"
               onClick={handleDrawerToggle}
               sx={{
@@ -325,7 +325,7 @@ const Header: React.FC = () => {
             >
               Menu
             </Typography>
-            <IconButton onClick={handleDrawerToggle} sx={{ color: "primary.main" }}>
+            <IconButton onClick={handleDrawerToggle} aria-label="Close navigation menu" sx={{ color: "primary.main" }}>
               <CloseIcon />
             </IconButton>
           </Box>

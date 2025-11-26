@@ -271,6 +271,7 @@ const Contact: React.FC = () => {
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`Visit our ${social.name} page`}
                         sx={{
                           backgroundColor: "background.paper",
                           border: "1px solid",

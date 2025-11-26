@@ -443,6 +443,7 @@ const Services = () => {
                 {/* Close Button */}
                 <IconButton
                   onClick={handleCloseModal}
+                  aria-label="Close service details"
                   sx={{
                     position: "absolute",
                     top: 16,
