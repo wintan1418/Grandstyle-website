@@ -1,436 +1,196 @@
-import React from "react";
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Button,
-  IconButton,
-  Divider,
-  Link,
-} from "@mui/material";
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  LinkedIn,
-  WhatsApp,
-  Email,
-  Phone,
-  LocationOn,
-  ArrowUpward,
-} from "@mui/icons-material";
 import { motion } from "framer-motion";
 
-const Footer: React.FC = () => {
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+const LOGO_URL =
+  "https://res.cloudinary.com/wintan1418/image/upload/c_thumb,w_200,g_face/v1743877057/logo%20folder/grandstyle%20logo.png";
 
-  const footerLinks = [
-    { title: "About Us", href: "#about" },
-    { title: "Our Services", href: "#services" },
-    { title: "Gallery", href: "#gallery" },
-    { title: "Testimonials", href: "#testimonials" },
-    { title: "Contact", href: "#contact" },
-  ];
+const services = [
+  "Weddings",
+  "Corporate Events",
+  "Social Celebrations",
+  "Production & Rentals",
+  "Specialty Services",
+];
 
-  const socialLinks = [
-    {
-      icon: <Facebook />,
-      url: "https://www.facebook.com/grandstyle.event",
-      color: "#1877F2",
-      name: "Facebook",
-    },
-    {
-      icon: <Instagram />,
-      url: "https://www.instagram.com/grandstyle.events?utm_source=qr&igsh=YWVtd2UxMHJkN3Nk",
-      color: "linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4)",
-      name: "Instagram",
-    },
-    {
-      icon: <Twitter />,
-      url: "https://www.twitter.com/grandstyleevents",
-      color: "#1DA1F2",
-      name: "Twitter",
-    },
-    {
-      icon: <LinkedIn />,
-      url: "https://www.linkedin.com/company/grandstyleevents/",
-      color: "#0077B5",
-      name: "LinkedIn",
-    },
-    {
-      icon: <WhatsApp />,
-      url: "https://wa.me/2348137635064",
-      color: "#25D366",
-      name: "WhatsApp",
-    },
-  ];
+const company = [
+  { label: "Our Story", target: "manifesto" },
+  { label: "Process", target: "process" },
+  { label: "Selected Work", target: "featured-work" },
+  { label: "Journal", target: "journal" },
+];
 
-  const contactInfo = [
-    {
-      icon: <Phone />,
-      title: "Call Us",
-      content: "+234 806 509 8130",
-      link: "tel:+2348065098130",
-    },
-    {
-      icon: <Email />,
-      title: "Email Us",
-      content: "info@grandstylevents.com",
-      link: "mailto:info@grandstylevents.com",
-    },
-    {
-      icon: <LocationOn />,
-      title: "Visit Us",
-      content: "Ondo, Lagos & Abuja, Nigeria",
-    },
-  ];
+const scrollTo = (id: string) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - 72;
+  window.scrollTo({ top, behavior: "smooth" });
+};
 
+const Footer = () => {
   return (
-    <Box
-      component="footer"
-      sx={{
-        background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
-        color: "white",
-        position: "relative",
-        overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "1px",
-          background: "linear-gradient(90deg, transparent 0%, #40E0D0 50%, transparent 100%)",
-        },
-      }}
-    >
-      {/* Background Pattern */}
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          opacity: 0.05,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-      />
-
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-        {/* Main Footer Content */}
-        <Box sx={{ py: { xs: 6, md: 8 } }}>
-          <Grid container spacing={4}>
-            {/* Company Info */}
-            <Grid item xs={12} md={4}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <Box sx={{ mb: 4 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                    <Box
-                      component="img"
-                      src="https://res.cloudinary.com/wintan1418/image/upload/c_thumb,w_200,g_face/v1743877057/logo%20folder/grandstyle%20logo.png"
-                      alt="Grandstyle Events"
-                      sx={{
-                        height: 50,
-                        width: "auto",
-                        mr: 2,
-                        filter: "brightness(1.2)",
-                      }}
-                    />
-                    <Box>
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          fontFamily: '"Playfair Display", serif',
-                          fontWeight: 700,
-                          color: "white",
-                          lineHeight: 1,
-                        }}
-                      >
-                        Grandstyle
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: "#40E0D0",
-                          fontSize: "0.9rem",
-                          letterSpacing: 2,
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        Events
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      color: "rgba(255,255,255,0.8)",
-                      lineHeight: 1.8,
-                      mb: 3,
-                    }}
-                  >
-                    Creating unforgettable experiences since 2012. We specialize in 
-                    African-inspired celebrations, weddings, corporate events, and 
-                    milestone celebrations with worldwide service.
-                  </Typography>
-                  
-                  {/* Social Media Icons */}
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {socialLinks.map((social, index) => (
-                      <IconButton
-                        key={index}
-                        component="a"
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Follow us on ${social.name}`}
-                        sx={{
-                          background: typeof social.color === "string" && social.color.includes("gradient")
-                            ? social.color
-                            : social.color,
-                          color: "white",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            transform: "translateY(-3px) scale(1.1)",
-                            boxShadow: `0 8px 25px ${typeof social.color === "string" && !social.color.includes("gradient") ? social.color + "40" : "rgba(64,224,208,0.3)"}`,
-                          },
-                        }}
-                      >
-                        {social.icon}
-                      </IconButton>
-                    ))}
-                  </Box>
-                </Box>
-              </motion.div>
-            </Grid>
-
-            {/* Quick Links */}
-            <Grid item xs={12} md={4}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 700,
-                    mb: 3,
-                    color: "#40E0D0",
-                    fontSize: "1.25rem",
-                  }}
-                >
-                  Quick Links
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  {footerLinks.map((link, index) => (
-                    <Link
-                      key={index}
-                      href={link.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const element = document.querySelector(link.href);
-                        if (element) {
-                          const offset = 70;
-                          const elementPosition = (element as HTMLElement).offsetTop - offset;
-                          window.scrollTo({
-                            top: elementPosition,
-                            behavior: "smooth",
-                          });
-                        }
-                      }}
-                      sx={{
-                        color: "rgba(255,255,255,0.8)",
-                        textDecoration: "none",
-                        fontSize: "1rem",
-                        transition: "all 0.3s ease",
-                        position: "relative",
-                        cursor: "pointer",
-                        "&:hover": {
-                          color: "#40E0D0",
-                          transform: "translateX(8px)",
-                        },
-                        "&::before": {
-                          content: '""',
-                          position: "absolute",
-                          left: "-16px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          width: "8px",
-                          height: "2px",
-                          backgroundColor: "#40E0D0",
-                          transition: "width 0.3s ease",
-                          opacity: 0,
-                        },
-                        "&:hover::before": {
-                          opacity: 1,
-                          width: "12px",
-                        },
-                      }}
-                    >
-                      {link.title}
-                    </Link>
-                  ))}
-                </Box>
-              </motion.div>
-            </Grid>
-
-            {/* Contact Info */}
-            <Grid item xs={12} md={4}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 700,
-                    mb: 3,
-                    color: "#40E0D0",
-                    fontSize: "1.25rem",
-                  }}
-                >
-                  Get In Touch
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  {contactInfo.map((contact, index) => (
-                    <Box
-                      key={index}
-                      component={contact.link ? "a" : "div"}
-                      href={contact.link}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        textDecoration: "none",
-                        color: "inherit",
-                        transition: "all 0.3s ease",
-                        ...(contact.link && {
-                          "&:hover": {
-                            color: "#40E0D0",
-                            transform: "translateX(4px)",
-                          },
-                        }),
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: "50%",
-                          backgroundColor: "rgba(64,224,208,0.2)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#40E0D0",
-                        }}
-                      >
-                        {contact.icon}
-                      </Box>
-                      <Box>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "rgba(255,255,255,0.6)",
-                            fontSize: "0.875rem",
-                          }}
-                        >
-                          {contact.title}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: "white",
-                            fontWeight: 500,
-                          }}
-                        >
-                          {contact.content}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              </motion.div>
-            </Grid>
-          </Grid>
-        </Box>
-
-        <Divider
-          sx={{
-            borderColor: "rgba(255,255,255,0.1)",
-            my: 4,
-          }}
-        />
-
-        {/* Bottom Footer */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            justifyContent: "space-between",
-            alignItems: "center",
-            py: 3,
-            gap: 2,
-          }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              color: "rgba(255,255,255,0.6)",
-              fontSize: "0.875rem",
-            }}
+    <footer className="bg-royal-descent text-paper">
+      <div className="container-edge pt-24 md:pt-32 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10 pb-16 border-b border-paper/10">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="md:col-span-5"
           >
-            © {new Date().getFullYear()} Grandstyle Events. All rights reserved.
-          </Typography>
-          
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: "#40E0D0",
-                fontSize: "0.875rem",
-                fontStyle: "italic",
-              }}
+            <div className="flex items-center gap-3 mb-6">
+              <img
+                src={LOGO_URL}
+                alt=""
+                className="h-10 w-auto brightness-110"
+                width="40"
+                height="40"
+              />
+              <div>
+                <span className="block font-display text-2xl leading-none">
+                  Grandstyle
+                </span>
+                <span className="eyebrow text-gold mt-1 block">
+                  Events · Est. 2012
+                </span>
+              </div>
+            </div>
+            <p className="font-display text-xl md:text-2xl text-paper/90 text-pretty leading-[1.35] max-w-md">
+              We plan so you can be present.
+            </p>
+            <p className="mt-4 text-paper/70 max-w-md text-body leading-relaxed">
+              Thirteen years of Nigerian event mastery — delivered with
+              restraint, precision, and quiet craft.
+            </p>
+
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="mt-10 flex items-end gap-4 max-w-md"
             >
-              Crafted with ❤️ by Wintech
-            </Typography>
-            
-            <Button
-              onClick={scrollToTop}
-              aria-label="Scroll to top of page"
-              sx={{
-                minWidth: "auto",
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                backgroundColor: "rgba(64,224,208,0.2)",
-                color: "#40E0D0",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  backgroundColor: "#40E0D0",
-                  color: "white",
-                  transform: "translateY(-3px)",
-                },
-              }}
+              <label className="flex-1">
+                <span className="eyebrow text-paper/60 block mb-2">
+                  Receive quiet updates
+                </span>
+                <input
+                  type="email"
+                  placeholder="you@domain.com"
+                  aria-label="Email address"
+                  className="w-full bg-transparent border-b border-paper/30 focus:border-paper focus:outline-none py-2 text-paper placeholder:text-paper/40 transition-colors duration-280"
+                />
+              </label>
+              <button
+                type="submit"
+                className="eyebrow text-paper hover:text-gold transition-colors duration-280 pb-2"
+                aria-label="Subscribe"
+              >
+                Subscribe →
+              </button>
+            </form>
+          </motion.div>
+
+          <div className="md:col-span-3">
+            <h4 className="eyebrow text-gold mb-5">Services</h4>
+            <ul className="flex flex-col gap-3">
+              {services.map((s) => (
+                <li key={s}>
+                  <button
+                    onClick={() => scrollTo("services")}
+                    className="text-paper/80 hover:text-paper text-left transition-colors duration-280"
+                  >
+                    {s}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className="eyebrow text-gold mb-5">Company</h4>
+            <ul className="flex flex-col gap-3">
+              {company.map((c) => (
+                <li key={c.target}>
+                  <button
+                    onClick={() => scrollTo(c.target)}
+                    className="text-paper/80 hover:text-paper text-left transition-colors duration-280"
+                  >
+                    {c.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className="eyebrow text-gold mb-5">Contact</h4>
+            <ul className="flex flex-col gap-3 text-paper/80 text-sm">
+              <li>
+                <a
+                  href="https://wa.me/2348137635064"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-paper transition-colors"
+                >
+                  WhatsApp
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:info@grandstylevents.com"
+                  className="hover:text-paper transition-colors break-all"
+                >
+                  info@grandstylevents.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="tel:+2348065098130"
+                  className="hover:text-paper transition-colors"
+                >
+                  +234 806 509 8130
+                </a>
+              </li>
+              <li className="pt-2 text-navy-soft">
+                Based in Ondo
+                <br />
+                Serving across Nigeria
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm text-paper/50">
+          <p>
+            © {new Date().getFullYear()} Grandstyle Events Consortium · Ondo,
+            Nigeria
+          </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="https://www.instagram.com/grandstyle.events"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-paper transition-colors duration-280"
             >
-              <ArrowUpward aria-hidden="true" />
-            </Button>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+              Instagram
+            </a>
+            <a
+              href="https://www.facebook.com/grandstyle.event"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-paper transition-colors duration-280"
+            >
+              Facebook
+            </a>
+            <a
+              href="https://www.linkedin.com/company/grandstyleevents/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-paper transition-colors duration-280"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 };
 
