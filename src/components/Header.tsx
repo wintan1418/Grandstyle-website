@@ -58,32 +58,18 @@ const Header = () => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center gap-3 group"
+            className="flex items-center group"
             aria-label="Grandstyle Events home"
           >
             <img
               src={LOGO_URL}
-              alt=""
-              className="h-8 md:h-9 w-auto"
-              width="36"
-              height="36"
+              alt="Grandstyle Events"
+              className={`h-10 md:h-12 w-auto transition-all duration-280 ${
+                scrolled ? "" : "brightness-0 invert"
+              }`}
+              width="48"
+              height="48"
             />
-            <div className="flex flex-col leading-none">
-              <span
-                className={`font-display text-lg md:text-xl font-medium tracking-tight transition-colors duration-280 ${
-                  scrolled ? "text-ink" : "text-ink md:text-paper"
-                }`}
-              >
-                Grandstyle
-              </span>
-              <span
-                className={`eyebrow text-[9px] md:text-[10px] mt-1 transition-colors duration-280 ${
-                  scrolled ? "text-crimson" : "text-crimson md:text-paper/70"
-                }`}
-              >
-                Events · Est. 2012
-              </span>
-            </div>
           </a>
 
           <nav className="hidden lg:flex items-center gap-10" aria-label="Primary">
@@ -108,13 +94,19 @@ const Header = () => {
           <div className="hidden lg:block">
             <button
               onClick={() => handleClick("enquire")}
-              className={`inline-flex items-center px-6 py-3 text-[12px] font-medium uppercase tracking-[0.12em] transition-colors duration-280 ease-standard ${
-                scrolled
-                  ? "bg-crimson text-paper hover:bg-crimson-deep"
-                  : "bg-paper text-ink hover:bg-crimson hover:text-paper"
-              }`}
+              className="group relative inline-flex items-center gap-3 bg-crimson text-paper pl-7 pr-6 py-[14px] text-[12px] font-medium uppercase tracking-[0.14em] overflow-hidden transition-colors duration-280 ease-standard hover:bg-crimson-deep focus-visible:outline-gold"
             >
-              Start an Enquiry
+              <span className="relative z-10">Start an Enquiry</span>
+              <span
+                aria-hidden
+                className="relative z-10 inline-flex items-center justify-center w-5 h-[1px] bg-paper transition-[width] duration-480 ease-standard group-hover:w-7"
+              />
+              <span
+                aria-hidden
+                className="relative z-10 -ml-1 text-[14px] leading-none transition-transform duration-480 ease-standard group-hover:translate-x-1"
+              >
+                →
+              </span>
             </button>
           </div>
 
