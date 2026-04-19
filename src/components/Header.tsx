@@ -179,7 +179,7 @@ const Header = () => {
                   Start an Enquiry
                 </button>
                 <p className="eyebrow text-ash mt-6">
-                  Based in Ondo · Serving across Nigeria
+                  Lagos · Ondo · Abuja
                 </p>
               </motion.div>
             </div>

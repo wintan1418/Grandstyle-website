@@ -149,9 +149,9 @@ const Footer = () => {
                 </a>
               </li>
               <li className="pt-2 text-navy-soft">
-                Based in Ondo
+                Lagos · Ondo · Abuja
                 <br />
-                Serving across Nigeria
+                Nigeria
               </li>
             </ul>
           </div>
@@ -159,7 +159,7 @@ const Footer = () => {
 
         <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm text-paper/50">
           <p>
-            © {new Date().getFullYear()} Grandstyle Events Consortium · Ondo,
+            © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
             Nigeria
           </p>
           <div className="flex items-center gap-6">

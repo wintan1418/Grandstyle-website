@@ -55,7 +55,7 @@ const Hero = () => {
         >
           <span className="hairline bg-paper/80 w-8" />
           <p className="eyebrow text-paper/90">
-            Event planning · Ondo, Nigeria · Since 2012
+            Event planning · Lagos · Ondo · Abuja · Since 2012
           </p>
         </motion.div>
 

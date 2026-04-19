@@ -4,7 +4,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 const stats = [
   { value: "13", label: "Years", note: "Since 2012" },
-  { value: "1,200+", label: "Events Delivered", note: "Ondo · Across Nigeria" },
+  { value: "1,200+", label: "Events Delivered", note: "Lagos · Ondo · Abuja" },
   { value: "40+", label: "On the Team", note: "Planners · Producers · Crew" },
 ];
 
