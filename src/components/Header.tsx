@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LOGO_URL =
-  "https://res.cloudinary.com/wintan1418/image/upload/c_thumb,w_200,g_face/v1743877057/logo%20folder/grandstyle%20logo.png";
+  "https://res.cloudinary.com/wintan1418/image/upload/w_600,c_fit,q_auto:best,f_auto/v1743877057/logo%20folder/grandstyle%20logo.png";
 
 const navItems = [
   { label: "About", target: "manifesto" },
@@ -47,7 +47,7 @@ const Header = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-280 ease-standard ${
           scrolled
-            ? "bg-paper/85 backdrop-blur-md backdrop-saturate-150 border-b border-line/60"
+            ? "bg-paper border-b border-line/60 shadow-[0_1px_0_rgba(15,43,91,0.04)]"
             : "bg-transparent"
         }`}
       >
@@ -64,11 +64,13 @@ const Header = () => {
             <img
               src={LOGO_URL}
               alt="Grandstyle Events"
-              className={`h-10 lg:h-12 w-auto transition-all duration-280 ${
-                scrolled ? "" : "brightness-0 invert"
-              }`}
-              width="48"
-              height="48"
+              className="h-14 lg:h-16 w-auto"
+              width="72"
+              height="72"
+              style={{
+                filter: scrolled ? "invert(1) hue-rotate(180deg)" : "none",
+                transition: "filter 280ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
             />
           </a>
           <span className="md:hidden" aria-hidden />
