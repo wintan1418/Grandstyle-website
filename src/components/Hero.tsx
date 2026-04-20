@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import MagneticButton from "./MagneticButton";
 
 const HERO_VIDEO =
   "https://res.cloudinary.com/wintan1418/video/upload/v1757499126/featured/GRAND_STYLE_IMASAYI_CANOPY_1_ajynib.mp4";
@@ -97,12 +98,13 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.05, ease }}
             className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-5"
           >
-            <button
+            <MagneticButton
               onClick={() => scrollTo("enquire")}
-              className="inline-flex items-center bg-crimson text-paper px-9 py-4 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-crimson-deep"
+              ariaLabel="Start an Enquiry"
+              className="bg-crimson text-paper px-9 py-4 text-[12px] font-medium uppercase tracking-[0.16em] hover:bg-crimson-deep"
             >
               Start an Enquiry
-            </button>
+            </MagneticButton>
             <button
               onClick={() => scrollTo("featured-work")}
               className="inline-flex items-center gap-3 text-paper text-[12px] font-medium uppercase tracking-[0.16em] border-b border-paper/60 pb-1 hover:border-paper hover:text-paper transition-colors duration-280"

@@ -1,11 +1,27 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
+import WhatHappensNext from "./WhatHappensNext";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdPNzlnnms0PjyEA4lJMcZYw1qoBxdO3GYyAx1gxONY3-XEAw/viewform?embedded=true";
 
+const FormSkeleton = () => (
+  <div className="p-8 md:p-10 space-y-7 animate-pulse" aria-hidden>
+    {[0, 1, 2, 3].map((i) => (
+      <div key={i} className="space-y-3">
+        <div className="h-3 w-24 bg-line rounded-sm" />
+        <div className="h-10 w-full bg-cloud rounded-sm" />
+      </div>
+    ))}
+    <div className="h-10 w-36 bg-line rounded-sm mt-4" />
+  </div>
+);
+
 const ClosingCTA = () => {
+  const [formLoaded, setFormLoaded] = useState(false);
   return (
     <section
       id="enquire"
@@ -29,10 +45,10 @@ const ClosingCTA = () => {
             transition={{ duration: 0.8, ease }}
             className="lg:col-span-5"
           >
-            <p className="eyebrow text-ink/70 mb-6">Begin</p>
+            <SectionEyebrow label="Begin" number="07" tone="ink" />
             <h2
               id="enquire-heading"
-              className="font-display text-display-lg font-medium text-ink leading-[1.05] tracking-tight text-balance"
+              className="font-display text-display-lg font-medium text-ink leading-[1.05] tracking-tight text-balance mt-6"
             >
               Tell us about{" "}
               <span className="italic font-light">your event.</span>
@@ -41,6 +57,11 @@ const ClosingCTA = () => {
               Every enquiry is read by a named member of our planning team. We
               respond, with specifics, within 24 business hours.
             </p>
+
+            <div className="mt-10">
+              <p className="eyebrow text-ink/60 mb-5">What happens next</p>
+              <WhatHappensNext />
+            </div>
 
             <div className="mt-10 space-y-4">
               <a
@@ -139,12 +160,20 @@ const ClosingCTA = () => {
                 </p>
               </div>
 
-              <div className="relative bg-paper">
+              <div className="relative bg-paper" style={{ minHeight: 820 }}>
+                {!formLoaded && (
+                  <div className="absolute inset-0">
+                    <FormSkeleton />
+                  </div>
+                )}
                 <iframe
                   src={FORM_URL}
                   title="Grandstyle Events enquiry form"
                   loading="lazy"
-                  className="w-full block"
+                  onLoad={() => setFormLoaded(true)}
+                  className={`w-full block transition-opacity duration-480 ease-standard ${
+                    formLoaded ? "opacity-100" : "opacity-0"
+                  }`}
                   style={{ height: 820, border: 0 }}
                 >
                   Loading enquiry form…

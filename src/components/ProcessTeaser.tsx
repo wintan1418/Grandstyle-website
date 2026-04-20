@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -40,10 +41,10 @@ const ProcessTeaser = () => {
           transition={{ duration: 0.8, ease }}
           className="lg:col-span-5 lg:sticky lg:top-32 self-start"
         >
-          <p className="eyebrow text-crimson mb-5">How We Work</p>
+          <SectionEyebrow label="How We Work" number="04" />
           <h2
             id="process-heading"
-            className="font-display text-h1 text-ink font-medium leading-[1.08] tracking-tight"
+            className="font-display text-h1 text-ink font-medium leading-[1.08] tracking-tight mt-6"
           >
             From first{" "}
             <span className="italic font-light text-ash">conversation</span>{" "}

@@ -15,7 +15,7 @@ const company = [
   { label: "Our Story", target: "manifesto" },
   { label: "Process", target: "process" },
   { label: "Selected Work", target: "featured-work" },
-  { label: "Journal", target: "journal" },
+  { label: "Contact", target: "enquire" },
 ];
 
 const scrollTo = (id: string) => {

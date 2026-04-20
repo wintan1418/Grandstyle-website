@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -54,6 +55,13 @@ const Testimonial = () => {
           transition={{ duration: 0.8, ease }}
           className="md:col-span-10"
         >
+          <div className="mb-8">
+            <SectionEyebrow
+              label="In Their Words"
+              number="05"
+              tone="navy-soft"
+            />
+          </div>
           <p
             className="font-display text-gold leading-none select-none"
             style={{ fontSize: "clamp(4rem, 10vw, 8rem)" }}

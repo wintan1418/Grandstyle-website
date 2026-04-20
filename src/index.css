@@ -43,6 +43,11 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+section[id] {
+  scroll-margin-top: 6rem;
 }
 
 body {
@@ -104,16 +109,16 @@ button { font-family: inherit; cursor: pointer; }
     padding-bottom: var(--section-y);
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-crimson text-paper px-8 py-4 font-body text-[13px] font-medium uppercase tracking-[0.08em] transition-colors duration-280 ease-standard hover:bg-crimson-deep focus-visible:outline-gold;
+    @apply inline-flex items-center justify-center bg-crimson text-paper px-9 py-4 font-body text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-crimson-deep focus-visible:outline-gold;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-ink text-ink px-8 py-4 font-body text-[13px] font-medium uppercase tracking-[0.08em] transition-colors duration-280 ease-standard hover:bg-ink hover:text-paper;
+    @apply inline-flex items-center justify-center border border-ink text-ink px-9 py-4 font-body text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-ink hover:text-paper;
   }
   .btn-ghost {
-    @apply inline-flex items-center gap-2 text-ink font-body text-[13px] font-medium uppercase tracking-[0.08em] border-b border-ink/30 pb-1 transition-colors duration-280 ease-standard hover:border-crimson hover:text-crimson;
+    @apply inline-flex items-center gap-3 text-ink font-body text-[12px] font-medium uppercase tracking-[0.16em] border-b border-ink/30 pb-1 transition-colors duration-280 ease-standard hover:border-crimson hover:text-crimson;
   }
   .btn-ghost-light {
-    @apply inline-flex items-center gap-2 text-paper font-body text-[13px] font-medium uppercase tracking-[0.08em] border-b border-paper/40 pb-1 transition-colors duration-280 ease-standard hover:border-paper hover:text-paper;
+    @apply inline-flex items-center gap-3 text-paper font-body text-[12px] font-medium uppercase tracking-[0.16em] border-b border-paper/40 pb-1 transition-colors duration-280 ease-standard hover:border-paper hover:text-paper;
   }
   .hairline {
     @apply block h-px w-10 bg-current;

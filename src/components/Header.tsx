@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import MagneticButton from "./MagneticButton";
 
 const LOGO_URL =
   "https://res.cloudinary.com/wintan1418/image/upload/w_600,c_fit,q_auto:best,f_auto/v1743877057/logo%20folder/grandstyle%20logo.png";
@@ -9,7 +10,7 @@ const navItems = [
   { label: "Services", target: "services" },
   { label: "Work", target: "featured-work" },
   { label: "Process", target: "process" },
-  { label: "Journal", target: "journal" },
+  { label: "Contact", target: "enquire" },
 ];
 
 const scrollToSection = (id: string) => {
@@ -21,10 +22,20 @@ const scrollToSection = (id: string) => {
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 80);
+      if (Math.abs(y - lastY) > 6) {
+        if (y > lastY && y > 180) setHidden(true);
+        else setHidden(false);
+        lastY = y;
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -45,7 +56,9 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-280 ease-standard ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-[transform,background-color,border-color] duration-480 ease-standard will-change-transform ${
+          hidden && !menuOpen ? "-translate-y-full" : "translate-y-0"
+        } ${
           scrolled
             ? "bg-paper border-b border-line/60 shadow-[0_1px_0_rgba(15,43,91,0.04)]"
             : "bg-transparent"
@@ -95,22 +108,13 @@ const Header = () => {
           </nav>
 
           <div className="hidden lg:block">
-            <button
+            <MagneticButton
               onClick={() => handleClick("enquire")}
-              className="group relative inline-flex items-center gap-3 bg-crimson text-paper pl-7 pr-6 py-[14px] text-[12px] font-medium uppercase tracking-[0.14em] overflow-hidden transition-colors duration-280 ease-standard hover:bg-crimson-deep focus-visible:outline-gold"
+              ariaLabel="Start an Enquiry"
+              className="bg-crimson text-paper px-8 py-[14px] text-[12px] font-medium uppercase tracking-[0.16em] hover:bg-crimson-deep"
             >
-              <span className="relative z-10">Start an Enquiry</span>
-              <span
-                aria-hidden
-                className="relative z-10 inline-flex items-center justify-center w-5 h-[1px] bg-paper transition-[width] duration-480 ease-standard group-hover:w-7"
-              />
-              <span
-                aria-hidden
-                className="relative z-10 -ml-1 text-[14px] leading-none transition-transform duration-480 ease-standard group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </button>
+              Start an Enquiry
+            </MagneticButton>
           </div>
 
           <button
