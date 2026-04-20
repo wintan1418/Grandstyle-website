@@ -52,7 +52,7 @@ const work = [
     category: "Wedding",
     year: "2023",
     guests: "650",
-    image: cldImage("gallery/Vibrant_African_Weddings_qlff08", 900, 1100),
+    image: cldImage("WhatsApp_Image_2026-04-20_at_10.29.38_cqhq4o", 900, 1100),
   },
   {
     title: "Gala Dinner",
