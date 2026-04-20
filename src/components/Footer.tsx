@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import DeveloperCredit from "./DeveloperCredit";
 
 const LOGO_URL =
   "https://res.cloudinary.com/wintan1418/image/upload/c_thumb,w_200,g_face/v1743877057/logo%20folder/grandstyle%20logo.png";
@@ -157,12 +158,12 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-sm text-paper/50">
+        <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-sm text-paper/50">
           <p>
             © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
             Nigeria
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <a
               href="https://www.instagram.com/grandstyle.events"
               target="_blank"
@@ -187,6 +188,8 @@ const Footer = () => {
             >
               LinkedIn
             </a>
+            <span aria-hidden className="hidden md:inline h-3 w-px bg-paper/20" />
+            <DeveloperCredit />
           </div>
         </div>
       </div>
