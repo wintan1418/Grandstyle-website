@@ -12,7 +12,7 @@ const work = [
   },
   {
     category: "Corporate",
-    publicId: "WhatsApp_Image_2026-04-20_at_10.29.36_e0l4tq",
+    publicId: "award/Best%20Corporate%20Event%202022",
     alt: "A corporate event produced by Grandstyle Events",
   },
   {
