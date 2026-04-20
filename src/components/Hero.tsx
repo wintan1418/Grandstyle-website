@@ -4,7 +4,7 @@ const HERO_VIDEO =
   "https://res.cloudinary.com/wintan1418/video/upload/v1757499126/featured/GRAND_STYLE_IMASAYI_CANOPY_1_ajynib.mp4";
 
 const HERO_POSTER =
-  "https://res.cloudinary.com/wintan1418/image/upload/c_fill,w_1920,h_1080,g_auto,q_auto:best,f_auto/gallery/Vibrant_African_Weddings_qlff08";
+  "https://res.cloudinary.com/wintan1418/video/upload/so_0,q_auto:best,f_jpg/featured/GRAND_STYLE_IMASAYI_CANOPY_1_ajynib.jpg";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -41,25 +41,25 @@ const Hero = () => {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(10,18,40,0.25) 0%, rgba(10,18,40,0.35) 45%, rgba(138,26,32,0.45) 85%, rgba(10,18,40,0.72) 100%)",
+            "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(10,18,40,0.98) 0%, rgba(10,18,40,0.55) 35%, rgba(10,18,40,0) 70%), linear-gradient(180deg, rgba(10,18,40,0.25) 0%, rgba(10,18,40,0.35) 45%, rgba(138,26,32,0.45) 85%, rgba(10,18,40,0.72) 100%)",
         }}
         aria-hidden="true"
       />
 
-      <div className="relative z-10 h-full container-edge flex flex-col justify-between pt-24 md:pt-28 pb-20">
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease }}
-          className="flex items-center gap-4"
-        >
-          <span className="hairline bg-paper/80 w-8" />
-          <p className="eyebrow text-paper/90">
-            Event planning · Lagos · Ondo · Abuja · Since 2012
-          </p>
-        </motion.div>
-
+      <div className="relative z-10 h-full container-edge flex flex-col justify-end pt-24 md:pt-28 pb-20">
         <div className="max-w-5xl">
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease }}
+            className="flex items-center gap-4 mb-6 md:mb-8"
+          >
+            <span className="hairline bg-paper/80 w-8" />
+            <p className="eyebrow text-paper/90">
+              Event planning · Lagos · Ondo · Abuja · Since 2012
+            </p>
+          </motion.div>
+
           <h1 className="font-display text-display-xl text-paper font-medium leading-[0.95] tracking-tight text-balance">
             {headlineWords.map((word, i) => (
               <motion.span

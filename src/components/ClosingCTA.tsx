@@ -103,9 +103,9 @@ const ClosingCTA = () => {
             <div className="mt-10 p-7 bg-ink/90 text-paper">
               <p className="eyebrow text-gold mb-3">Where we are</p>
               <p className="font-display text-lg md:text-xl text-paper leading-[1.4] max-w-md">
-                Lagos · Ondo · Abuja.{" "}
+                Based in Ondo, Lagos and Abuja.{" "}
                 <span className="text-paper/75 italic font-light">
-                  Consultation by appointment at any of our offices.
+                  We deliver excellent jobs across Nigeria and beyond.
                 </span>
               </p>
             </div>

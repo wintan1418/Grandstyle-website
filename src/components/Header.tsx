@@ -58,19 +58,20 @@ const Header = () => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center group"
+            className="hidden md:inline-flex items-center group"
             aria-label="Grandstyle Events home"
           >
             <img
               src={LOGO_URL}
               alt="Grandstyle Events"
-              className={`h-10 md:h-12 w-auto transition-all duration-280 ${
+              className={`h-10 lg:h-12 w-auto transition-all duration-280 ${
                 scrolled ? "" : "brightness-0 invert"
               }`}
               width="48"
               height="48"
             />
           </a>
+          <span className="md:hidden" aria-hidden />
 
           <nav className="hidden lg:flex items-center gap-10" aria-label="Primary">
             {navItems.map((item) => (
