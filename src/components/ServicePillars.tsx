@@ -18,7 +18,7 @@ const pillars = [
     title: "Corporate",
     description:
       "Boardroom galas, product launches, and AGMs — planned with the precision your stakeholders expect.",
-    publicId: "gallery/Corporate_Events_with_African_Flair_hvhrmz",
+    publicId: "WhatsApp_Image_2026-04-20_at_10.29.36_e0l4tq",
     meta: "Galas · Launches · Conferences",
   },
   {
