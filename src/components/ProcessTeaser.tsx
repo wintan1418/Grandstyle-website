@@ -41,7 +41,7 @@ const ProcessTeaser = () => {
           transition={{ duration: 0.8, ease }}
           className="lg:col-span-5 lg:sticky lg:top-32 self-start"
         >
-          <SectionEyebrow label="How We Work" number="04" />
+          <SectionEyebrow label="How We Work" number="05" total="08" />
           <h2
             id="process-heading"
             className="font-display text-h1 text-ink font-medium leading-[1.08] tracking-tight mt-6"

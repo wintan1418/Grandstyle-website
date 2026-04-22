@@ -60,7 +60,8 @@ const FeaturedWork = () => {
           >
             <SectionEyebrow
               label="Selected Work"
-              number="03"
+              number="04"
+              total="08"
               tone="navy-soft"
             />
             <h2

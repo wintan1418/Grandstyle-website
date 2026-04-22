@@ -48,7 +48,7 @@ const FAQ = () => {
     >
       <div className="container-edge grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
-          <SectionEyebrow label="Frequently Asked" number="06" />
+          <SectionEyebrow label="Frequently Asked" number="07" total="08" />
           <motion.h2
             id="faq-heading"
             initial={{ opacity: 0, y: 16 }}

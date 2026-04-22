@@ -27,6 +27,7 @@ export default {
       fontFamily: {
         display: ['Fraunces', 'Georgia', 'serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       fontSize: {
         'eyebrow': ['0.75rem', { lineHeight: '1.4', letterSpacing: '0.16em' }],

@@ -158,7 +158,17 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-sm text-paper/50">
+        <div className="mt-12 md:mt-16 -mb-4 md:-mb-6 overflow-hidden leading-none select-none">
+          <p
+            aria-hidden
+            className="font-display text-paper font-normal whitespace-nowrap leading-[0.9] tracking-[-0.02em]"
+            style={{ fontSize: "clamp(4.5rem,13vw,11rem)" }}
+          >
+            Grandstyle<span className="italic text-crimson">.</span>
+          </p>
+        </div>
+
+        <div className="pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-sm text-paper/50 border-t border-paper/10">
           <p>
             © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
             Nigeria

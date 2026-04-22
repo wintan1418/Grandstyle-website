@@ -1,7 +1,8 @@
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import Manifesto from "./components/Manifesto";
-import ServicePillars from "./components/ServicePillars";
+import TrustMarquee from "./components/TrustMarquee";
+import ServicesIndex from "./components/ServicesIndex";
+import Philosophy from "./components/Philosophy";
 import FeaturedWork from "./components/FeaturedWork";
 import ProcessTeaser from "./components/ProcessTeaser";
 import Testimonial from "./components/Testimonial";
@@ -25,8 +26,9 @@ function App() {
       <Header />
       <main id="main-content">
         <Hero />
-        <Manifesto />
-        <ServicePillars />
+        <TrustMarquee />
+        <ServicesIndex />
+        <Philosophy />
         <FeaturedWork />
         <ProcessTeaser />
         <Testimonial />

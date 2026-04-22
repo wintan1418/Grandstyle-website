@@ -111,9 +111,17 @@ const Header = () => {
             <MagneticButton
               onClick={() => handleClick("enquire")}
               ariaLabel="Start an Enquiry"
-              className="bg-crimson text-paper px-8 py-[14px] text-[12px] font-medium uppercase tracking-[0.16em] hover:bg-crimson-deep"
+              className="group bg-crimson text-paper rounded-full pl-6 pr-4 py-[11px] text-[11px] font-medium uppercase tracking-[0.16em] shadow-[0_8px_22px_-12px_rgba(184,36,43,0.55)] hover:bg-crimson-deep hover:shadow-[0_14px_30px_-12px_rgba(184,36,43,0.7)] transition-[background-color,box-shadow] duration-480 ease-standard"
             >
-              Start an Enquiry
+              <span className="inline-flex items-center gap-[10px]">
+                <span>Start an Enquiry</span>
+                <span
+                  aria-hidden
+                  className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-paper/15 text-paper transition-transform duration-480 ease-standard group-hover:translate-x-[3px] group-hover:bg-paper/25"
+                >
+                  →
+                </span>
+              </span>
             </MagneticButton>
           </div>
 

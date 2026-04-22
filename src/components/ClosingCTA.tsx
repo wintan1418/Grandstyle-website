@@ -45,7 +45,7 @@ const ClosingCTA = () => {
             transition={{ duration: 0.8, ease }}
             className="lg:col-span-5"
           >
-            <SectionEyebrow label="Begin" number="07" tone="ink" />
+            <SectionEyebrow label="Correspondence" number="08" total="08" tone="ink" />
             <h2
               id="enquire-heading"
               className="font-display text-display-lg font-medium text-ink leading-[1.05] tracking-tight text-balance mt-6"
