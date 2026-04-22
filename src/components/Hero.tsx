@@ -9,8 +9,6 @@ const HERO_POSTER =
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const headlineWords = ["Events,", "executed", "in", "full", "measure."];
-
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
   if (!el) return;
@@ -18,118 +16,202 @@ const scrollTo = (id: string) => {
   window.scrollTo({ top, behavior: "smooth" });
 };
 
+const volYear = () => {
+  const years = new Date().getFullYear() - 2012;
+  const romans: Record<number, string> = {
+    10: "X",
+    11: "XI",
+    12: "XII",
+    13: "XIII",
+    14: "XIV",
+    15: "XV",
+    16: "XVI",
+    17: "XVII",
+    18: "XVIII",
+    19: "XIX",
+    20: "XX",
+  };
+  return romans[years] || "XIV";
+};
+
+const today = new Date()
+  .toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })
+  .replace(/\//g, ".");
+
 const Hero = () => {
   return (
     <section
       id="hero"
-      className="relative h-screen min-h-[640px] w-full overflow-hidden bg-ink"
       aria-label="Grandstyle Events — cinematic introduction"
+      className="relative bg-paper text-ink"
     >
-      <video
-        className="absolute inset-0 w-full h-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={HERO_POSTER}
-        aria-hidden="true"
-      >
-        <source src={HERO_VIDEO} type="video/mp4" />
-      </video>
+      <div className="container-edge pt-28 md:pt-32 pb-16 md:pb-24">
+        {/* Meta row */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
+          className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-10 md:mb-14 mono-kicker text-ash"
+        >
+          <span className="text-ink">№ 001 — Prelude</span>
+          <span className="hidden md:inline">
+            A studio for occasions of consequence
+          </span>
+          <span>
+            {today} / Vol. {volYear()}
+          </span>
+        </motion.div>
 
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 45% at 0% 0%, rgba(10,18,40,0.98) 0%, rgba(10,18,40,0.55) 35%, rgba(10,18,40,0) 70%), linear-gradient(180deg, rgba(10,18,40,0.25) 0%, rgba(10,18,40,0.35) 45%, rgba(138,26,32,0.45) 85%, rgba(10,18,40,0.72) 100%)",
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 h-full container-edge flex flex-col justify-end pt-24 md:pt-28 pb-20">
-        <div className="max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
+        {/* Staggered headline */}
+        <h1 className="font-display font-normal text-ink leading-[0.92] tracking-[-0.02em] text-[clamp(3rem,11vw,11.25rem)]">
+          <motion.span
+            initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease }}
-            className="flex items-center gap-4 mb-6 md:mb-8"
+            transition={{ duration: 0.9, delay: 0.1, ease }}
+            className="block"
           >
-            <span className="hairline bg-paper/80 w-8" />
-            <p className="eyebrow text-paper/90">
-              Event planning · Lagos · Ondo · Abuja · Since 2012
+            Events,
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.22, ease }}
+            className="block pl-[6vw] md:pl-[9vw]"
+          >
+            <span className="italic text-crimson">executed</span> in
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.34, ease }}
+            className="block pl-[14vw] md:pl-[20vw]"
+          >
+            full <span className="italic text-crimson">measure.</span>
+          </motion.span>
+        </h1>
+
+        {/* 3-column grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.55, ease }}
+          className="mt-14 md:mt-20 grid grid-cols-1 md:grid-cols-[1.3fr_0.9fr_1fr] gap-10 md:gap-12 items-end"
+        >
+          {/* Lede column */}
+          <div>
+            <p className="mono-kicker text-crimson">— Since 2012</p>
+            <p className="font-display text-[clamp(1.25rem,2vw,1.75rem)] leading-[1.25] text-ink/90 max-w-[34ch] mt-4">
+              Grandstyle is a planning & production studio orchestrating{" "}
+              <span className="italic text-crimson">
+                weddings, galas and private chapters
+              </span>{" "}
+              with quiet precision and uncommon care.
             </p>
-          </motion.div>
+          </div>
 
-          <h1 className="font-display text-display-xl text-paper font-medium leading-[0.95] tracking-tight text-balance">
-            {headlineWords.map((word, i) => (
-              <motion.span
-                key={`${word}-${i}`}
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.9,
-                  delay: 0.15 + i * 0.08,
-                  ease,
-                }}
-                className={`inline-block mr-[0.25em] ${
-                  word === "full" ? "italic text-crimson" : ""
-                }`}
+          {/* Stats column */}
+          <div className="flex flex-col gap-4">
+            {[
+              { num: "1,200+", lbl: "Events staged" },
+              { num: "3", lbl: "Offices · Lagos · Ondo · Abuja" },
+              {
+                num: (
+                  <>
+                    13
+                    <span className="text-[0.5em] text-crimson ml-1">yr</span>
+                  </>
+                ),
+                lbl: "Tenure",
+              },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="flex items-baseline gap-4 pb-4 border-b border-dashed border-line"
               >
-                {word}
-              </motion.span>
+                <span className="font-display text-[clamp(2rem,3.2vw,2.75rem)] leading-none text-ink">
+                  {stat.num}
+                </span>
+                <span className="mono-kicker text-ash">{stat.lbl}</span>
+              </div>
             ))}
-          </h1>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.85, ease }}
-            className="mt-8 max-w-xl text-paper/85 text-body-lg leading-[1.55] font-light"
-          >
-            Strategic planning, design, and delivery for Nigeria's most
-            meaningful occasions — corporate galas, bridal ceremonies, and the
-            quiet specialty moments in between.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.05, ease }}
-            className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-5"
-          >
+          {/* CTA column */}
+          <div className="flex flex-col gap-5 items-start">
             <MagneticButton
               onClick={() => scrollTo("enquire")}
-              ariaLabel="Start an Enquiry"
-              className="bg-crimson text-paper px-9 py-4 text-[12px] font-medium uppercase tracking-[0.16em] hover:bg-crimson-deep"
+              ariaLabel="Begin a conversation"
+              className="group bg-ink text-paper rounded-full pl-7 pr-5 py-[14px] text-[12px] font-medium uppercase tracking-[0.16em] hover:bg-crimson transition-colors duration-480 ease-standard"
             >
-              Start an Enquiry
+              <span className="inline-flex items-center gap-3">
+                <span>Begin a conversation</span>
+                <span
+                  aria-hidden
+                  className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-paper text-ink text-[11px] transition-transform duration-480 ease-standard group-hover:translate-x-1 group-hover:rotate-45"
+                >
+                  ↗
+                </span>
+              </span>
             </MagneticButton>
-            <button
-              onClick={() => scrollTo("featured-work")}
-              className="inline-flex items-center gap-3 text-paper text-[12px] font-medium uppercase tracking-[0.16em] border-b border-paper/60 pb-1 hover:border-paper hover:text-paper transition-colors duration-280"
-            >
-              Explore our work
-              <span aria-hidden>→</span>
-            </button>
-          </motion.div>
-        </div>
+            <span className="mono-kicker text-ash max-w-[28ch]">
+              Currently accepting a limited number of engagements per season
+            </span>
+          </div>
+        </motion.div>
+      </div>
 
-        <motion.button
-          onClick={() => scrollTo("manifesto")}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.4, ease }}
-          aria-label="Scroll to next section"
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 group"
+      {/* Feature image strip */}
+      <div className="container-edge">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.7, ease }}
+          className="relative aspect-[16/7] overflow-hidden bg-cloud"
         >
-          <span className="eyebrow text-paper/70 group-hover:text-paper transition-colors duration-280">
-            Scroll
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={HERO_POSTER}
+            aria-hidden="true"
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+          </video>
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(10,18,40,0.85) 0%, rgba(10,18,40,0) 65%), linear-gradient(180deg, rgba(10,18,40,0.12) 0%, rgba(10,18,40,0) 40%, rgba(10,18,40,0.25) 100%)",
+            }}
+          />
+          <span className="absolute top-5 right-5 mono-kicker text-paper/80">
+            № 001 / Film
           </span>
-          <span className="relative block w-px h-12 bg-paper/30 overflow-hidden">
-            <span className="absolute inset-x-0 top-0 h-1/2 bg-crimson animate-drift" />
+          <span className="absolute left-5 bottom-5 mono-kicker text-paper bg-ink/80 border border-paper/30 px-3 py-2">
+            Imasayi Canopy · On location, Ondo
           </span>
-        </motion.button>
+        </motion.div>
+
+        {/* Caption row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6 pt-6 border-t border-line">
+          {[
+            { k: "Operating from", v: "Lagos · Ondo · Abuja" },
+            { k: "Reach", v: "Nigeria & beyond" },
+            { k: "Tenure", v: "13 years" },
+            { k: "Disciplines", v: "Weddings · Corporate · Social" },
+          ].map((c, i) => (
+            <div key={i} className="flex flex-col gap-1">
+              <span className="mono-kicker text-ash">{c.k}</span>
+              <span className="font-display text-[clamp(1rem,1.4vw,1.25rem)] text-ink">
+                {c.v}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

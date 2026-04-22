@@ -98,6 +98,12 @@ button { font-family: inherit; cursor: pointer; }
   .eyebrow {
     @apply font-body uppercase tracking-eyebrow text-[11px] md:text-[12px] font-medium;
   }
+  .mono-kicker {
+    @apply font-mono uppercase tracking-[0.14em] text-[10px] md:text-[11px] font-normal;
+  }
+  .rule {
+    @apply h-px w-full bg-line;
+  }
   .container-edge {
     width: 100%;
     max-width: var(--container-max);
@@ -109,10 +115,10 @@ button { font-family: inherit; cursor: pointer; }
     padding-bottom: var(--section-y);
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center bg-crimson text-paper px-9 py-4 font-body text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-crimson-deep focus-visible:outline-gold;
+    @apply inline-flex items-center justify-center gap-3 bg-crimson text-paper rounded-full px-9 py-[14px] font-body text-[12px] font-medium uppercase tracking-[0.16em] shadow-[0_10px_30px_-14px_rgba(184,36,43,0.5)] transition-[background-color,box-shadow,transform] duration-480 ease-standard hover:bg-crimson-deep hover:shadow-[0_18px_40px_-14px_rgba(184,36,43,0.6)] focus-visible:outline-gold;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center border border-ink text-ink px-9 py-4 font-body text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-ink hover:text-paper;
+    @apply inline-flex items-center justify-center gap-3 border border-ink text-ink rounded-full px-9 py-[14px] font-body text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-280 ease-standard hover:bg-ink hover:text-paper;
   }
   .btn-ghost {
     @apply inline-flex items-center gap-3 text-ink font-body text-[12px] font-medium uppercase tracking-[0.16em] border-b border-ink/30 pb-1 transition-colors duration-280 ease-standard hover:border-crimson hover:text-crimson;
