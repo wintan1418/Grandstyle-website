@@ -1,6 +1,31 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import BlurImage from "./BlurImage";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+const slides = [
+  {
+    publicId: "gallery/grandstyle_image_wk4u64",
+    caption: "Mid-service",
+  },
+  {
+    publicId: "gallery/bamqjbs2skqkh3pa9zxk",
+    caption: "Stage · final checks",
+  },
+  {
+    publicId: "featured/Corporate%20Gatherings",
+    caption: "Room · full house",
+  },
+  {
+    publicId: "gallery/jkncqcyke3nr5p0o7jmb",
+    caption: "The team · before doors",
+  },
+  {
+    publicId: "services/Gala%20Dinners",
+    caption: "Gala · mid-course",
+  },
+];
 
 const principles = [
   {
@@ -26,6 +51,18 @@ const principles = [
 ];
 
 const Philosophy = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % slides.length),
+      5500
+    );
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section
       id="philosophy"
@@ -57,6 +94,63 @@ const Philosophy = () => {
             as if the evening could have unfolded no other way.
           </span>
         </motion.h2>
+
+        {/* Cinematic slide — crossfades through a few frames */}
+        <motion.figure
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1, delay: 0.25, ease }}
+          className="relative mt-20 md:mt-24"
+        >
+          <div className="relative aspect-[21/9] w-full overflow-hidden bg-ink">
+            {slides.map((s, i) => (
+              <div
+                key={s.publicId}
+                aria-hidden={i !== index}
+                className="absolute inset-0 transition-opacity duration-[1400ms] ease-standard will-change-[opacity]"
+                style={{ opacity: i === index ? 1 : 0 }}
+              >
+                <BlurImage
+                  publicId={s.publicId}
+                  w={2000}
+                  h={857}
+                  alt={s.caption}
+                  className="absolute inset-0 w-full h-full"
+                />
+              </div>
+            ))}
+
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(10,18,40,0.35) 0%, rgba(10,18,40,0.15) 45%, rgba(10,18,40,0.7) 100%)",
+              }}
+            />
+
+            <span className="absolute top-5 left-5 mono-kicker text-paper/80">
+              Still · {slides[index].caption}
+            </span>
+            <span className="absolute bottom-5 right-5 mono-kicker text-paper/80 tabular-nums">
+              {String(index + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+            </span>
+
+            <div className="absolute bottom-5 left-5 flex items-center gap-2">
+              {slides.map((s, i) => (
+                <button
+                  key={s.publicId}
+                  onClick={() => setIndex(i)}
+                  aria-label={`View frame ${i + 1}`}
+                  className={`h-px transition-all duration-480 ease-standard ${
+                    i === index ? "w-10 bg-paper" : "w-6 bg-paper/40 hover:bg-paper/70"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.figure>
 
         <div className="mt-20 md:mt-24 pt-8 border-t border-paper/20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {principles.map((p, i) => (
