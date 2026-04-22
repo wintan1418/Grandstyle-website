@@ -30,13 +30,13 @@ const Footer = () => {
   return (
     <footer className="bg-royal-descent text-paper">
       <div className="container-edge pt-24 md:pt-32 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-10 pb-16 border-b border-paper/10">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-y-12 gap-x-8 md:gap-10 pb-16 border-b border-paper/10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="md:col-span-5"
+            className="col-span-2 md:col-span-5"
           >
             <div className="flex items-center gap-3 mb-6">
               <img
@@ -88,7 +88,7 @@ const Footer = () => {
             </form>
           </motion.div>
 
-          <div className="md:col-span-3">
+          <div className="col-span-1 md:col-span-3">
             <h4 className="eyebrow text-gold mb-5">Services</h4>
             <ul className="flex flex-col gap-3">
               {services.map((s) => (
@@ -104,7 +104,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="md:col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <h4 className="eyebrow text-gold mb-5">Company</h4>
             <ul className="flex flex-col gap-3">
               {company.map((c) => (
@@ -120,7 +120,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="md:col-span-2">
+          <div className="col-span-2 md:col-span-2">
             <h4 className="eyebrow text-gold mb-5">Contact</h4>
             <ul className="flex flex-col gap-3 text-paper/80 text-sm">
               <li>
@@ -168,12 +168,9 @@ const Footer = () => {
           </p>
         </div>
 
-        <div className="pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-sm text-paper/50 border-t border-paper/10">
-          <p>
-            © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
-            Nigeria
-          </p>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="pt-10 border-t border-paper/10 text-sm text-paper/60">
+          {/* Social row — distributed full width on mobile, inline on desktop */}
+          <div className="flex items-center justify-between md:hidden pb-6 border-b border-paper/10">
             <a
               href="https://www.instagram.com/grandstyle.events"
               target="_blank"
@@ -198,8 +195,54 @@ const Footer = () => {
             >
               LinkedIn
             </a>
-            <span aria-hidden className="hidden md:inline h-3 w-px bg-paper/20" />
+          </div>
+
+          {/* Developer credit — own row on mobile */}
+          <div className="flex justify-between items-center md:hidden py-5 border-b border-paper/10">
+            <span className="text-paper/45">Credit</span>
             <DeveloperCredit />
+          </div>
+
+          {/* Copyright — own row on mobile */}
+          <p className="md:hidden pt-5 text-paper/50 text-xs leading-relaxed">
+            © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
+            Nigeria
+          </p>
+
+          {/* Desktop layout: single row */}
+          <div className="hidden md:flex items-center justify-between gap-6">
+            <p>
+              © {new Date().getFullYear()} Grandstyle Events Consortium · Lagos,
+              Nigeria
+            </p>
+            <div className="flex items-center gap-6">
+              <a
+                href="https://www.instagram.com/grandstyle.events"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-paper transition-colors duration-280"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.facebook.com/grandstyle.event"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-paper transition-colors duration-280"
+              >
+                Facebook
+              </a>
+              <a
+                href="https://www.linkedin.com/company/grandstyleevents/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-paper transition-colors duration-280"
+              >
+                LinkedIn
+              </a>
+              <span aria-hidden className="h-3 w-px bg-paper/20" />
+              <DeveloperCredit />
+            </div>
           </div>
         </div>
       </div>

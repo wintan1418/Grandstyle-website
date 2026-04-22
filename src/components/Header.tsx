@@ -71,13 +71,13 @@ const Header = () => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="hidden md:inline-flex items-center group"
+            className="inline-flex items-center group shrink-0"
             aria-label="Grandstyle Events home"
           >
             <img
               src={LOGO_URL}
               alt="Grandstyle Events"
-              className="h-14 lg:h-16 w-auto"
+              className="h-11 md:h-14 lg:h-16 w-auto"
               width="72"
               height="72"
               style={{
@@ -86,7 +86,6 @@ const Header = () => {
               }}
             />
           </a>
-          <span className="md:hidden" aria-hidden />
 
           <nav className="hidden lg:flex items-center gap-10" aria-label="Primary">
             {navItems.map((item) => (
