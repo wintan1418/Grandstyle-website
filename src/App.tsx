@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import TrustMarquee from "./components/TrustMarquee";
 import ServicesIndex from "./components/ServicesIndex";
 import Philosophy from "./components/Philosophy";
+import Interstitial from "./components/Interstitial";
 import FeaturedWork from "./components/FeaturedWork";
 import ProcessTeaser from "./components/ProcessTeaser";
 import Testimonial from "./components/Testimonial";
@@ -29,6 +30,7 @@ function App() {
         <TrustMarquee />
         <ServicesIndex />
         <Philosophy />
+        <Interstitial />
         <FeaturedWork />
         <ProcessTeaser />
         <Testimonial />
