@@ -84,8 +84,8 @@ const ServicesIndex = () => {
             transition={{ duration: 0.8, delay: 0.12, ease }}
             className="text-sm text-ash max-w-[32ch] md:text-right leading-relaxed"
           >
-            Six practices, one studio. Engage us for the whole arc — or a
-            single, surgical intervention.
+            Six practices, one event company. Engage us for the whole arc —
+            or a single, surgical intervention.
           </motion.p>
         </div>
 

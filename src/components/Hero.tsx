@@ -55,7 +55,7 @@ const Hero = () => {
         >
           <span className="text-ink">№ 001 — Prelude</span>
           <span className="hidden md:inline">
-            A studio for occasions of consequence
+            An event company for occasions of consequence
           </span>
           <span>
             {today} / Vol. {volYear()}
@@ -101,7 +101,7 @@ const Hero = () => {
           <div>
             <p className="mono-kicker text-crimson">— Since 2012</p>
             <p className="font-display text-[clamp(1.25rem,2vw,1.75rem)] leading-[1.25] text-ink/90 max-w-[34ch] mt-4">
-              Grandstyle is a planning & production studio orchestrating{" "}
+              Grandstyle is a planning & production event company orchestrating{" "}
               <span className="italic text-crimson">
                 weddings, galas and private chapters
               </span>{" "}
@@ -192,7 +192,7 @@ const Hero = () => {
             № 001 / Film
           </span>
           <span className="absolute left-5 bottom-5 mono-kicker text-paper bg-ink/80 border border-paper/30 px-3 py-2">
-            Imasayi Canopy · On location, Ondo
+            1,000-guest marquee setup · On location
           </span>
         </motion.div>
 
