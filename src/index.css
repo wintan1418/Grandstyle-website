@@ -203,6 +203,23 @@ button { font-family: inherit; cursor: pointer; }
   overflow-x: auto;
 }
 .prose-editorial pre code { background: transparent; padding: 0; color: inherit; }
+.prose-editorial u { text-decoration: underline; text-underline-offset: 2px; }
+.prose-editorial s { text-decoration: line-through; }
+
+/* WYSIWYG editor (TipTap) — empty-state placeholder + selected image */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--color-ash);
+  opacity: 0.6;
+}
+.ProseMirror:focus { outline: none; }
+.ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-crimson);
+  outline-offset: 2px;
+}
 
 .hero-kenburns {
   transform-origin: center 40%;

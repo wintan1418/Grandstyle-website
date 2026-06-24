@@ -1,14 +1,30 @@
-import { createClient } from "@sanity/client";
+import { createClient, type SanityClient } from "@sanity/client";
 
-// Public, read-only client. Project ID + dataset are safe to expose.
+// Public, read-only Sanity config. Project ID + dataset are safe to expose.
 // Reads are served from Sanity's CDN. Never put the write token here —
 // writes go through the Netlify Function (see netlify/functions/posts.ts).
-export const sanity = createClient({
-  projectId: import.meta.env.VITE_SANITY_PROJECT_ID as string,
-  dataset: (import.meta.env.VITE_SANITY_DATASET as string) || "production",
-  apiVersion: "2024-01-01",
-  useCdn: true,
-});
+const projectId = import.meta.env.VITE_SANITY_PROJECT_ID as string | undefined;
+const dataset = (import.meta.env.VITE_SANITY_DATASET as string) || "production";
+
+export const sanityConfigured = Boolean(projectId);
+
+// IMPORTANT: createClient throws if projectId is missing. We guard it so a
+// missing/blank env var degrades the blog gracefully instead of crashing the
+// entire site (the marketing pages must always render).
+let client: SanityClient | null = null;
+if (sanityConfigured) {
+  client = createClient({
+    projectId: projectId as string,
+    dataset,
+    apiVersion: "2024-01-01",
+    useCdn: true,
+  });
+} else if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[sanity] VITE_SANITY_PROJECT_ID is not set — the blog will show no posts."
+  );
+}
 
 export interface Post {
   _id: string;
@@ -32,9 +48,11 @@ const PUBLISHED_BY_SLUG = `*[_type == "post" && status == "published" && slug.cu
 }`;
 
 export async function getPublishedPosts(): Promise<Post[]> {
-  return sanity.fetch(PUBLISHED_LIST);
+  if (!client) return [];
+  return client.fetch(PUBLISHED_LIST);
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  return sanity.fetch(PUBLISHED_BY_SLUG, { slug });
+  if (!client) return null;
+  return client.fetch(PUBLISHED_BY_SLUG, { slug });
 }

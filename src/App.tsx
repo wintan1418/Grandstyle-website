@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -7,7 +8,10 @@ import ReadingProgress from "./components/ReadingProgress";
 import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import Admin from "./pages/Admin";
+
+// Admin (with the heavy WYSIWYG editor) loads only when the owner visits it,
+// keeping the public site bundle light.
+const Admin = lazy(() => import("./pages/Admin"));
 
 // Public marketing layout — header, footer, floating buttons.
 function SiteLayout() {
@@ -39,7 +43,20 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
         </Route>
         {/* Admin runs without the marketing chrome */}
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <Suspense
+              fallback={
+                <div className="min-h-screen bg-cloud grid place-items-center text-ash">
+                  Loading…
+                </div>
+              }
+            >
+              <Admin />
+            </Suspense>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

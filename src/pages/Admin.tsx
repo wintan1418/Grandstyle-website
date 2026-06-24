@@ -1,10 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { marked } from "marked";
+import RichEditor from "../components/RichEditor";
 import { adminApi, type PostDraft } from "../lib/adminApi";
 import { uploadImage, cloudinaryConfigured } from "../lib/cloudinary";
 import type { Post } from "../lib/sanity";
 
 const PW_KEY = "gs_admin_pw";
+
+// Posts now store HTML. Older posts were authored in Markdown — convert those
+// to HTML when loading them into the editor so they show formatted.
+const looksLikeHtml = (s: string) => /<\/?[a-z][\s\S]*>/i.test(s);
+const toEditorHtml = (body: string) => {
+  if (!body) return "";
+  return looksLikeHtml(body)
+    ? body
+    : (marked.parse(body, { async: false }) as string);
+};
 
 const emptyDraft = (): PostDraft => ({
   title: "",
@@ -45,8 +57,6 @@ const Admin = () => {
   const [filter, setFilter] = useState<Filter>("all");
 
   const coverInputRef = useRef<HTMLInputElement>(null);
-  const bodyInputRef = useRef<HTMLInputElement>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     document.title = "Admin · Grandstyle Events";
@@ -109,29 +119,33 @@ const Admin = () => {
     setError("");
     setDraft({
       ...p,
+      body: toEditorHtml(p.body || ""),
       publishedAt: p.publishedAt ? p.publishedAt.slice(0, 10) : "",
     });
   };
 
-  const onUpload = async (file: File, target: "cover" | "body") => {
+  // Cover image upload (the editor handles in-body images itself).
+  const onUploadCover = async (file: File) => {
     setUploading(true);
     setError("");
     try {
       const url = await uploadImage(file);
-      if (!draft) return;
-      if (target === "cover") {
-        setDraft({ ...draft, coverImageUrl: url });
-      } else {
-        const ta = bodyRef.current;
-        const md = `\n\n![${file.name.replace(/\.[^.]+$/, "")}](${url})\n\n`;
-        const pos = ta?.selectionStart ?? draft.body.length;
-        const next = draft.body.slice(0, pos) + md + draft.body.slice(pos);
-        setDraft({ ...draft, body: next });
-      }
+      setDraft((d) => (d ? { ...d, coverImageUrl: url } : d));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed.");
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Passed to the editor: upload, surface errors here, return the URL to insert.
+  const uploadInlineImage = async (file: File) => {
+    setError("");
+    try {
+      return await uploadImage(file);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Image upload failed.");
+      throw e;
     }
   };
 
@@ -306,46 +320,15 @@ const Admin = () => {
                 className="w-full bg-transparent font-display text-[clamp(1.6rem,3vw,2.25rem)] leading-tight text-ink placeholder:text-ash/40 focus:outline-none"
               />
 
-              <div className="mt-6 flex items-center justify-between border-t border-line pt-5">
-                <label className={labelCls}>Content</label>
-                {cloudinaryConfigured && (
-                  <>
-                    <input
-                      ref={bodyInputRef}
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) onUpload(f, "body");
-                        e.target.value = "";
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => bodyInputRef.current?.click()}
-                      disabled={uploading}
-                      className="text-[12px] font-medium text-crimson hover:text-crimson-deep transition-colors disabled:opacity-50"
-                    >
-                      {uploading ? "Uploading…" : "＋ Insert image"}
-                    </button>
-                  </>
-                )}
+              <div className="mt-5 border-t border-line pt-2">
+                <RichEditor
+                  value={draft.body}
+                  onChange={(html) =>
+                    setDraft((d) => (d ? { ...d, body: html } : d))
+                  }
+                  onUploadImage={cloudinaryConfigured ? uploadInlineImage : undefined}
+                />
               </div>
-
-              <textarea
-                ref={bodyRef}
-                value={draft.body}
-                onChange={(e) => setDraft({ ...draft, body: e.target.value })}
-                placeholder="Write your story in Markdown…"
-                rows={20}
-                className="mt-3 w-full bg-paper border border-line rounded-lg px-4 py-3 font-mono text-[14px] leading-relaxed text-ink focus:outline-none focus:border-crimson resize-y"
-              />
-              <p className="mt-2 text-[12px] text-ash">
-                Markdown supported — <code>## heading</code>, <code>**bold**</code>,{" "}
-                <code>_italic_</code>, lists, <code>&gt; quote</code>,{" "}
-                <code>[link](url)</code>.
-              </p>
             </div>
 
             {/* Settings sidebar */}
@@ -392,7 +375,7 @@ const Admin = () => {
                     hidden
                     onChange={(e) => {
                       const f = e.target.files?.[0];
-                      if (f) onUpload(f, "cover");
+                      if (f) onUploadCover(f);
                       e.target.value = "";
                     }}
                   />
