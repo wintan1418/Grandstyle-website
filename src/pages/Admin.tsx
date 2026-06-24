@@ -529,10 +529,8 @@ const Admin = () => {
   // ── Editor ────────────────────────────────────────────────────
   if (draft) {
     return (
-      <div className="font-publicsans min-h-screen bg-[#E4DCCD] p-0 md:p-8">
-        <div
-          className={`mx-auto flex min-h-screen max-w-[1200px] overflow-hidden bg-[#ECE5D9] text-[#25201C] md:min-h-[calc(100vh-4rem)] md:rounded-lg ${cardShadow}`}
-        >
+      <div className="font-publicsans h-screen bg-[#ECE5D9]">
+        <div className="flex h-screen w-full overflow-hidden bg-[#ECE5D9] text-[#25201C]">
           <Rail view="posts" onNavigate={navigate} onLogout={logout} />
 
           <div className="flex min-w-0 flex-1 flex-col">
