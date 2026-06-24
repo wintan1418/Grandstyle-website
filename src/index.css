@@ -136,6 +136,74 @@ button { font-family: inherit; cursor: pointer; }
   .text-pretty { text-wrap: pretty; }
 }
 
+/* Rendered Markdown body for blog posts (/blog/:slug) */
+.prose-editorial {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.prose-editorial > * + * { margin-top: 1.5rem; }
+.prose-editorial h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.2;
+  margin-top: 3rem;
+}
+.prose-editorial h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+  line-height: 1.25;
+  margin-top: 2.25rem;
+}
+.prose-editorial a {
+  color: var(--color-crimson);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-editorial a:hover { color: var(--color-crimson-deep); }
+.prose-editorial strong { font-weight: 600; }
+.prose-editorial em { font-style: italic; }
+.prose-editorial ul,
+.prose-editorial ol { padding-left: 1.4rem; }
+.prose-editorial ul { list-style: disc; }
+.prose-editorial ol { list-style: decimal; }
+.prose-editorial li + li { margin-top: 0.5rem; }
+.prose-editorial blockquote {
+  border-left: 2px solid var(--color-crimson);
+  padding-left: 1.25rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-navy);
+}
+.prose-editorial img {
+  width: 100%;
+  border-radius: 0.5rem;
+  margin-block: 2rem;
+}
+.prose-editorial hr {
+  border: 0;
+  height: 1px;
+  background: var(--color-line);
+  margin-block: 3rem;
+}
+.prose-editorial code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-cloud);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+.prose-editorial pre {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+.prose-editorial pre code { background: transparent; padding: 0; color: inherit; }
+
 .hero-kenburns {
   transform-origin: center 40%;
   animation: kenburns 22s var(--ease-standard) infinite alternate;

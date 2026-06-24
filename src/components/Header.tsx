@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MagneticButton from "./MagneticButton";
 
 const LOGO_URL =
@@ -24,6 +25,9 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const onHome = location.pathname === "/";
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -50,7 +54,13 @@ const Header = () => {
 
   const handleClick = (id: string) => {
     setMenuOpen(false);
-    setTimeout(() => scrollToSection(id), menuOpen ? 240 : 0);
+    // On the homepage we smooth-scroll; from any other route we navigate
+    // home with a hash so Home can scroll to the section on arrival.
+    if (onHome) {
+      setTimeout(() => scrollToSection(id), menuOpen ? 240 : 0);
+    } else {
+      navigate(`/#${id}`);
+    }
   };
 
   return (
@@ -65,11 +75,13 @@ const Header = () => {
         }`}
       >
         <div className="container-edge flex items-center justify-between h-16 md:h-20">
-          <a
-            href="#top"
+          <Link
+            to="/"
             onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              if (onHome) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
             }}
             className="inline-flex items-center group shrink-0"
             aria-label="Grandstyle Events home"
@@ -85,7 +97,7 @@ const Header = () => {
                 transition: "filter 280ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             />
-          </a>
+          </Link>
 
           <nav className="hidden lg:flex items-center gap-10" aria-label="Primary">
             {navItems.map((item) => (
@@ -104,6 +116,20 @@ const Header = () => {
                 />
               </button>
             ))}
+            <Link
+              to="/blog"
+              onClick={() => setMenuOpen(false)}
+              className={`group relative text-[13px] font-body font-medium tracking-tight transition-colors duration-280 ${
+                scrolled ? "text-ink hover:text-crimson" : "text-paper hover:text-paper"
+              }`}
+            >
+              Journal
+              <span
+                className={`absolute -bottom-2 left-0 h-px w-0 group-hover:w-full transition-all duration-480 ease-standard ${
+                  scrolled ? "bg-crimson" : "bg-paper"
+                }`}
+              />
+            </Link>
           </nav>
 
           <div className="hidden lg:block">
@@ -178,6 +204,23 @@ const Header = () => {
                     {item.label}
                   </motion.button>
                 ))}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.48,
+                    delay: 0.08 + navItems.length * 0.06,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <Link
+                    to="/blog"
+                    onClick={() => setMenuOpen(false)}
+                    className="block text-left font-display text-3xl md:text-4xl text-ink hover:text-crimson transition-colors duration-280"
+                  >
+                    Journal
+                  </Link>
+                </motion.div>
               </nav>
 
               <motion.div

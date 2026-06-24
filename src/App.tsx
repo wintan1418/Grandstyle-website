@@ -1,19 +1,16 @@
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Header from "./components/Header";
-import Hero from "./components/Hero";
-import TrustMarquee from "./components/TrustMarquee";
-import ServicesIndex from "./components/ServicesIndex";
-import Philosophy from "./components/Philosophy";
-import FeaturedWork from "./components/FeaturedWork";
-import ProcessTeaser from "./components/ProcessTeaser";
-import Testimonial from "./components/Testimonial";
-import FAQ from "./components/FAQ";
-import ClosingCTA from "./components/ClosingCTA";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
 import BackToTop from "./components/BackToTop";
 import ReadingProgress from "./components/ReadingProgress";
+import Home from "./pages/Home";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import Admin from "./pages/Admin";
 
-function App() {
+// Public marketing layout — header, footer, floating buttons.
+function SiteLayout() {
   return (
     <div className="min-h-screen bg-paper text-ink font-body antialiased">
       <a
@@ -24,21 +21,27 @@ function App() {
       </a>
       <ReadingProgress />
       <Header />
-      <main id="main-content">
-        <Hero />
-        <TrustMarquee />
-        <ServicesIndex />
-        <Philosophy />
-        <FeaturedWork />
-        <ProcessTeaser />
-        <Testimonial />
-        <FAQ />
-        <ClosingCTA />
-      </main>
+      <Outlet />
       <Footer />
       <WhatsAppButton />
       <BackToTop />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<SiteLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+        </Route>
+        {/* Admin runs without the marketing chrome */}
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
