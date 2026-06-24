@@ -150,7 +150,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="pt-2 text-navy-soft">
-                Lagos · Ondo · Abuja
+                Lagos State · Ondo State · Abuja (FCT)
                 <br />
                 Nigeria
               </li>

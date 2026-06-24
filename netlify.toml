@@ -5,7 +5,18 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Friendly path for the admin API → serverless function
+[[redirects]]
+  from = "/api/posts"
+  to = "/.netlify/functions/posts"
+  status = 200
+
+# SPA fallback: every other route serves the app (handled client-side by the router)
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
