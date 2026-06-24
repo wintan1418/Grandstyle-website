@@ -221,6 +221,10 @@ button { font-family: inherit; cursor: pointer; }
   outline-offset: 2px;
 }
 
+/* Fonts for the Magazine admin (loaded only when /admin mounts) */
+.font-spectral { font-family: "Spectral", Georgia, "Times New Roman", serif; }
+.font-publicsans { font-family: "Public Sans", system-ui, -apple-system, sans-serif; }
+
 .hero-kenburns {
   transform-origin: center 40%;
   animation: kenburns 22s var(--ease-standard) infinite alternate;

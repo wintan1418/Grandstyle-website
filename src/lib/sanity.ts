@@ -31,6 +31,7 @@ export interface Post {
   title: string;
   slug: string;
   excerpt?: string;
+  category?: string;
   coverImageUrl?: string;
   body: string;
   author?: string;
@@ -40,11 +41,11 @@ export interface Post {
 
 // Only published posts, newest first.
 const PUBLISHED_LIST = `*[_type == "post" && status == "published"] | order(publishedAt desc){
-  _id, title, "slug": slug.current, excerpt, coverImageUrl, author, publishedAt, status
+  _id, title, "slug": slug.current, excerpt, category, coverImageUrl, author, publishedAt, status
 }`;
 
 const PUBLISHED_BY_SLUG = `*[_type == "post" && status == "published" && slug.current == $slug][0]{
-  _id, title, "slug": slug.current, excerpt, coverImageUrl, body, author, publishedAt, status
+  _id, title, "slug": slug.current, excerpt, category, coverImageUrl, body, author, publishedAt, status
 }`;
 
 export async function getPublishedPosts(): Promise<Post[]> {

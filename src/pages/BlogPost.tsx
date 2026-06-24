@@ -79,7 +79,12 @@ const BlogPost = () => {
           >
             ← The Journal
           </Link>
-          <h1 className="mt-6 font-display text-h1 text-balance">{post.title}</h1>
+          {post.category && (
+            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.24em] text-crimson">
+              {post.category}
+            </p>
+          )}
+          <h1 className="mt-4 font-display text-h1 text-balance">{post.title}</h1>
           <div className="mt-6 flex items-center justify-center gap-3 text-ash">
             {post.author && <span className="text-meta">{post.author}</span>}
             {post.author && post.publishedAt && (

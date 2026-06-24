@@ -22,6 +22,7 @@ const emptyDraft = (): PostDraft => ({
   title: "",
   slug: "",
   excerpt: "",
+  category: "",
   coverImageUrl: "",
   body: "",
   author: "",
@@ -32,12 +33,122 @@ const emptyDraft = (): PostDraft => ({
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
 
-const inputCls =
-  "w-full bg-paper border border-line rounded-lg px-3.5 py-2.5 text-ink text-[15px] focus:outline-none focus:border-crimson focus:ring-2 focus:ring-crimson/10 transition-all duration-280 placeholder:text-ash/60";
+const fmtLong = (iso?: string) => {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return "";
+  }
+};
 
-const labelCls = "block text-[11px] font-medium uppercase tracking-[0.12em] text-ash";
+// Derive the list pill state: draft / live / scheduled (published in future).
+type PillState = "draft" | "live" | "scheduled";
+const pillOf = (p: Post): PillState => {
+  if (p.status !== "published") return "draft";
+  if (p.publishedAt && new Date(p.publishedAt).getTime() > Date.now())
+    return "scheduled";
+  return "live";
+};
+const PILL: Record<PillState, { label: string; cls: string }> = {
+  draft: { label: "DRAFT", cls: "text-[#9a6a18] bg-[#F4E7CB]" },
+  live: { label: "LIVE", cls: "text-[#2f6b46] bg-[#DDEBDD]" },
+  scheduled: { label: "SCHEDULED", cls: "text-[#6e5f4c] bg-[#E6DCCB]" },
+};
+
+const labelCls =
+  "text-[11px] font-bold uppercase tracking-[0.18em] text-[#A6303A]";
+const fieldCls =
+  "w-full bg-transparent text-[#231C16] text-[14px] focus:outline-none placeholder:text-[#a99a85]";
 
 type Filter = "all" | "published" | "draft";
+
+// ── Left navigation rail (shared by list + editor) ───────────────
+const RailIcon = ({ d }: { d: React.ReactNode }) => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    {d}
+  </svg>
+);
+
+const Rail = ({ onLogout }: { onLogout: () => void }) => {
+  const item = (active: boolean) =>
+    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
+      active
+        ? "bg-[rgba(201,154,91,0.18)] font-semibold text-[#F3E7D8]"
+        : "text-[#caa78f]"
+    }`;
+  const inert =
+    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] text-[#caa78f] opacity-60 cursor-default";
+  return (
+    <aside className="hidden w-[212px] flex-none flex-col bg-[#4E1A21] px-[18px] py-[26px] text-[#E7D6C6] md:flex">
+      <div className="font-spectral border-b border-[rgba(231,214,198,0.16)] px-2 pb-[22px] text-[21px] leading-[1.05] text-[#F3E7D8]">
+        Grandstyle
+        <br />
+        <span className="text-[#C99A5B]">Journal</span>
+      </div>
+
+      <nav className="mt-[18px] flex flex-col gap-[3px]">
+        <span className={item(false)} title="Coming soon">
+          <RailIcon d={<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>} />
+          Dashboard
+        </span>
+        <span className={item(true)}>
+          <RailIcon d={<><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 12h6M9 16h5" /></>} />
+          Posts
+        </span>
+        <span className={inert} title="Coming soon">
+          <RailIcon d={<><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5L4 20" /></>} />
+          Media
+        </span>
+        <span className={inert} title="Coming soon">
+          <RailIcon d={<><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M18.5 5.5l-2 2M7.5 16.5l-2 2" /></>} />
+          Settings
+        </span>
+      </nav>
+
+      <div className="mt-auto border-t border-[rgba(231,214,198,0.16)] pt-3">
+        <div className="flex items-center gap-2.5 px-2 py-2">
+          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[#C99A5B] text-[13px] font-bold text-[#4E1A21]">
+            GE
+          </div>
+          <div className="text-[12.5px] leading-tight">
+            <div className="font-semibold text-[#F3E7D8]">Editorial team</div>
+            <div className="text-[#a98870]">grandstyle</div>
+          </div>
+        </div>
+        <div className="mt-1 flex items-center gap-4 px-2 text-[12px]">
+          <Link to="/" className="text-[#caa78f] transition-colors hover:text-[#F3E7D8]">
+            View site ↗
+          </Link>
+          <button
+            onClick={onLogout}
+            className="text-[#caa78f] transition-colors hover:text-[#F3E7D8]"
+          >
+            Log out
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+};
+
+// Slim burgundy bar for mobile (rail is hidden below md).
+const MobileBar = ({ onLogout }: { onLogout: () => void }) => (
+  <div className="flex items-center justify-between bg-[#4E1A21] px-5 py-3 text-[#E7D6C6] md:hidden">
+    <span className="font-spectral text-[17px] text-[#F3E7D8]">
+      Grandstyle <span className="text-[#C99A5B]">Journal</span>
+    </span>
+    <button onClick={onLogout} className="text-[13px] text-[#caa78f]">
+      Log out
+    </button>
+  </div>
+);
+
+const cardShadow = "shadow-[0_24px_60px_-24px_rgba(70,46,32,0.34)]";
 
 const Admin = () => {
   const [password, setPassword] = useState<string>(
@@ -59,8 +170,19 @@ const Admin = () => {
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    document.title = "Admin · Grandstyle Events";
+    document.title = "Journal Admin · Grandstyle Events";
     window.scrollTo(0, 0);
+    // Load the Magazine fonts only when the admin mounts (keeps the public
+    // site bundle/network clean).
+    const id = "gs-admin-fonts";
+    if (!document.getElementById(id)) {
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Public+Sans:wght@400;500;600;700&display=swap";
+      document.head.appendChild(link);
+    }
   }, []);
 
   const loadPosts = async (pw: string) => {
@@ -209,16 +331,15 @@ const Admin = () => {
   // ── Login screen ──────────────────────────────────────────────
   if (!authed) {
     return (
-      <div className="min-h-screen bg-cloud flex items-center justify-center px-5 py-24">
+      <div className="font-publicsans flex min-h-screen items-center justify-center bg-[#E4DCCD] px-5 py-24">
         <form
           onSubmit={handleLogin}
-          className="w-full max-w-sm bg-paper border border-line rounded-2xl shadow-elevated p-8 md:p-10"
+          className={`w-full max-w-sm rounded-lg border border-[#DCD0BF] bg-[#ECE5D9] p-8 md:p-10 ${cardShadow}`}
         >
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-crimson">
-            Grandstyle Events
-          </p>
-          <h1 className="mt-3 font-display text-h2">Journal Admin</h1>
-          <p className="mt-2 text-meta text-ash">
+          <div className="font-spectral text-[24px] leading-[1.05] text-[#231C16]">
+            Grandstyle <span className="text-[#A6303A]">Journal</span>
+          </div>
+          <p className="mt-3 text-[13px] text-[#6e5f4c]">
             Enter the admin password to manage your blog.
           </p>
           <div className="mt-8">
@@ -229,22 +350,22 @@ const Admin = () => {
               value={pwInput}
               onChange={(e) => setPwInput(e.target.value)}
               placeholder="••••••••"
-              className={`${inputCls} mt-2`}
+              className="mt-2 w-full rounded-[7px] border border-[#cdbfa9] bg-[#F3ECE0] px-3.5 py-2.5 text-[15px] text-[#231C16] focus:border-[#A6303A] focus:outline-none"
             />
           </div>
           {authError && (
-            <p className="mt-3 text-[13px] text-crimson">{authError}</p>
+            <p className="mt-3 text-[13px] text-[#A6303A]">{authError}</p>
           )}
           <button
             type="submit"
             disabled={loading || !pwInput.trim()}
-            className="btn-primary mt-6 w-full disabled:opacity-50"
+            className="mt-6 w-full rounded-[7px] bg-[#A6303A] py-2.5 text-[13px] font-bold uppercase tracking-[0.08em] text-[#F3E7D8] transition-colors hover:bg-[#8f2831] disabled:opacity-50"
           >
             {loading ? "Checking…" : "Sign in"}
           </button>
           <Link
             to="/"
-            className="mt-6 block text-center text-[13px] text-ash hover:text-ink transition-colors"
+            className="mt-6 block text-center text-[13px] text-[#6e5f4c] transition-colors hover:text-[#231C16]"
           >
             ← Back to site
           </Link>
@@ -253,201 +374,239 @@ const Admin = () => {
     );
   }
 
-  // ── Editor (two-pane: content + settings sidebar) ─────────────
+  // ── Editor ────────────────────────────────────────────────────
   if (draft) {
-    const statusPill =
-      draft.status === "published"
-        ? "bg-navy/10 text-navy"
-        : "bg-ash/15 text-ash";
     return (
-      <div className="min-h-screen bg-cloud">
-        {/* Sticky editor toolbar */}
-        <div className="sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-line">
-          <div className="container-edge max-w-5xl flex items-center justify-between h-16">
-            <button
-              onClick={() => setDraft(null)}
-              className="text-[13px] text-ash hover:text-ink transition-colors"
-            >
-              ← All posts
-            </button>
-            <div className="flex items-center gap-3">
-              <span
-                className={`hidden sm:inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] ${statusPill}`}
-              >
-                {draft._id ? draft.status : "new"}
-              </span>
-              <button
-                onClick={() => save("draft")}
-                disabled={saving}
-                className="rounded-full border border-ink/20 px-4 py-2 text-[12px] font-medium uppercase tracking-[0.1em] text-ink hover:border-ink transition-colors disabled:opacity-50"
-              >
-                Save draft
-              </button>
-              <button
-                onClick={() => save("published")}
-                disabled={saving}
-                className="rounded-full bg-crimson px-5 py-2 text-[12px] font-medium uppercase tracking-[0.1em] text-paper hover:bg-crimson-deep transition-colors disabled:opacity-50"
-              >
-                {saving ? "Saving…" : draft.status === "published" ? "Update" : "Publish"}
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="font-publicsans min-h-screen bg-[#E4DCCD] p-0 md:p-8">
+        <div
+          className={`mx-auto flex min-h-screen max-w-[1200px] overflow-hidden bg-[#ECE5D9] text-[#25201C] md:min-h-[calc(100vh-4rem)] md:rounded-lg ${cardShadow}`}
+        >
+          <Rail onLogout={logout} />
 
-        <div className="container-edge max-w-5xl py-8 md:py-12">
-          {error && (
-            <p className="mb-6 rounded-lg bg-crimson/10 px-4 py-3 text-[13px] text-crimson">
-              {error}
-            </p>
-          )}
+          <div className="flex min-w-0 flex-1 flex-col">
+            <MobileBar onLogout={logout} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-10 items-start">
-            {/* Main content */}
-            <div className="bg-paper border border-line rounded-2xl p-6 md:p-8">
-              <input
-                value={draft.title}
-                onChange={(e) =>
-                  setDraft({
-                    ...draft,
-                    title: e.target.value,
-                    slug:
-                      !draft._id && (!draft.slug || draft.slug === slugify(draft.title))
-                        ? slugify(e.target.value)
-                        : draft.slug,
-                  })
-                }
-                placeholder="Post title"
-                className="w-full bg-transparent font-display text-[clamp(1.6rem,3vw,2.25rem)] leading-tight text-ink placeholder:text-ash/40 focus:outline-none"
-              />
-
-              <div className="mt-5 border-t border-line pt-2">
-                <RichEditor
-                  value={draft.body}
-                  onChange={(html) =>
-                    setDraft((d) => (d ? { ...d, body: html } : d))
+            {/* Top bar */}
+            <div className="flex flex-none flex-wrap items-center justify-between gap-3 border-b border-[#DCD0BF] bg-[#F3ECE0] px-5 py-3 md:h-16 md:px-7 md:py-0">
+              <div className="text-[13px] text-[#8a7d6a]">
+                <button
+                  onClick={() => setDraft(null)}
+                  className="text-[#a99a85] transition-colors hover:text-[#4E1A21]"
+                >
+                  Posts
+                </button>
+                <span className="px-2">/</span>
+                <span className="font-semibold text-[#4E1A21]">
+                  {draft._id ? "Edit post" : "New post"}
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() =>
+                    draft.slug &&
+                    window.open(`/blog/${draft.slug}`, "_blank", "noopener")
                   }
-                  onUploadImage={cloudinaryConfigured ? uploadInlineImage : undefined}
-                />
+                  disabled={!draft.slug}
+                  title={draft.slug ? "Open the public post" : "Save first to preview"}
+                  className="rounded-[7px] border border-[#cdbfa9] px-4 py-2 text-[13px] font-semibold text-[#6e5f4c] transition-colors hover:border-[#A6303A] disabled:opacity-40"
+                >
+                  Preview
+                </button>
+                <button
+                  onClick={() => save("draft")}
+                  disabled={saving}
+                  className="rounded-[7px] border border-[#cdbfa9] px-4 py-2 text-[13px] font-semibold text-[#4E1A21] transition-colors hover:border-[#A6303A] disabled:opacity-50"
+                >
+                  Save draft
+                </button>
+                <button
+                  onClick={() => save("published")}
+                  disabled={saving}
+                  className="rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831] disabled:opacity-50"
+                >
+                  {saving
+                    ? "Saving…"
+                    : draft._id && draft.status === "published"
+                    ? "Update"
+                    : "Publish"}
+                </button>
               </div>
             </div>
 
-            {/* Settings sidebar */}
-            <aside className="lg:sticky lg:top-24 space-y-6">
-              {/* Cover */}
-              <div className="bg-paper border border-line rounded-2xl p-5">
-                <label className={labelCls}>Cover image</label>
-                <div className="mt-3">
-                  {draft.coverImageUrl ? (
-                    <div className="relative group">
-                      <img
-                        src={draft.coverImageUrl}
-                        alt=""
-                        className="aspect-[16/10] w-full rounded-lg object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setDraft({ ...draft, coverImageUrl: "" })}
-                        className="absolute top-2 right-2 rounded-full bg-ink/70 text-paper w-7 h-7 text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label="Remove image"
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto">
+              {error && (
+                <p className="mx-7 mt-5 rounded-lg bg-[#A6303A]/10 px-4 py-3 text-[13px] text-[#A6303A]">
+                  {error}
+                </p>
+              )}
+
+              <div className="flex flex-col gap-[26px] px-5 py-7 md:flex-row md:px-7">
+                {/* Writing column */}
+                <div className="min-w-0 flex-1">
+                  <input
+                    value={draft.category || ""}
+                    onChange={(e) =>
+                      setDraft({ ...draft, category: e.target.value })
+                    }
+                    placeholder="WEDDINGS · FEATURE (optional kicker)"
+                    className="w-full bg-transparent text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A] placeholder:text-[#A6303A]/40 focus:outline-none"
+                  />
+                  <input
+                    value={draft.title}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        title: e.target.value,
+                        slug:
+                          !draft._id &&
+                          (!draft.slug || draft.slug === slugify(draft.title))
+                            ? slugify(e.target.value)
+                            : draft.slug,
+                      })
+                    }
+                    placeholder="Post title"
+                    className="font-spectral mt-3 w-full bg-transparent text-[clamp(2rem,4.5vw,50px)] font-medium leading-[1.04] tracking-[-0.01em] text-[#231C16] placeholder:text-[#231C16]/30 focus:outline-none"
+                  />
+                  <div className="my-[22px] h-[2px] bg-gradient-to-r from-[#C99A5B] to-transparent" />
+
+                  <RichEditor
+                    value={draft.body}
+                    onChange={(html) =>
+                      setDraft((d) => (d ? { ...d, body: html } : d))
+                    }
+                    onUploadImage={
+                      cloudinaryConfigured ? uploadInlineImage : undefined
+                    }
+                  />
+                </div>
+
+                {/* Metadata sidebar */}
+                <aside className="flex w-full flex-none flex-col gap-5 md:w-[312px]">
+                  {/* Cover image */}
+                  <div>
+                    <div className={`${labelCls} mb-2.5`}>Cover image</div>
+                    {draft.coverImageUrl ? (
+                      <div
+                        className="relative flex h-[140px] items-end justify-between rounded-lg bg-cover bg-center p-[11px]"
+                        style={{ backgroundImage: `url(${draft.coverImageUrl})` }}
                       >
-                        ✕
-                      </button>
-                    </div>
-                  ) : (
-                    cloudinaryConfigured && (
+                        <button
+                          type="button"
+                          onClick={() => coverInputRef.current?.click()}
+                          className="rounded-md bg-[rgba(54,40,30,0.5)] px-2.5 py-1.5 text-[11px] font-semibold text-white"
+                        >
+                          {uploading ? "Uploading…" : "Replace"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDraft({ ...draft, coverImageUrl: "" })
+                          }
+                          className="rounded-md bg-[rgba(54,40,30,0.5)] px-2.5 py-1.5 text-[11px] font-semibold text-white"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
                       <button
                         type="button"
                         onClick={() => coverInputRef.current?.click()}
-                        disabled={uploading}
-                        className="aspect-[16/10] w-full rounded-lg border-2 border-dashed border-line flex flex-col items-center justify-center gap-1 text-ash hover:border-crimson hover:text-crimson transition-colors disabled:opacity-50"
+                        disabled={uploading || !cloudinaryConfigured}
+                        className="flex h-[140px] w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-[#cdbfa9] text-[#8a7d6a] transition-colors hover:border-[#A6303A] hover:text-[#A6303A] disabled:opacity-50"
                       >
                         <span className="text-2xl leading-none">＋</span>
                         <span className="text-[12px]">
                           {uploading ? "Uploading…" : "Upload image"}
                         </span>
                       </button>
-                    )
-                  )}
-                  <input
-                    ref={coverInputRef}
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) onUploadCover(f);
-                      e.target.value = "";
-                    }}
-                  />
-                  <input
-                    className={`${inputCls} mt-3 text-[13px]`}
-                    value={draft.coverImageUrl}
-                    onChange={(e) =>
-                      setDraft({ ...draft, coverImageUrl: e.target.value })
-                    }
-                    placeholder="…or paste an image URL"
-                  />
-                </div>
+                    )}
+                    <input
+                      ref={coverInputRef}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) onUploadCover(f);
+                        e.target.value = "";
+                      }}
+                    />
+                    <input
+                      className={`${fieldCls} mt-2.5 rounded-[7px] border border-[#cdbfa9] bg-[#F3ECE0] px-3 py-2 text-[13px]`}
+                      value={draft.coverImageUrl}
+                      onChange={(e) =>
+                        setDraft({ ...draft, coverImageUrl: e.target.value })
+                      }
+                      placeholder="…or paste an image URL"
+                    />
+                  </div>
+
+                  {/* URL slug */}
+                  <div className="border-t border-[#DCD0BF] pt-4">
+                    <div className={`${labelCls} mb-2`}>URL slug</div>
+                    <div className="font-spectral flex items-center text-[15px] text-[#231C16]">
+                      <span className="text-[#a99a85]">/blog/</span>
+                      <input
+                        className="font-spectral w-full bg-transparent focus:outline-none"
+                        value={draft.slug}
+                        onChange={(e) =>
+                          setDraft({ ...draft, slug: slugify(e.target.value) })
+                        }
+                        placeholder="auto-from-title"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Excerpt */}
+                  <div className="border-t border-[#DCD0BF] pt-4">
+                    <div className={`${labelCls} mb-2`}>Excerpt</div>
+                    <textarea
+                      rows={3}
+                      className="w-full resize-y bg-transparent text-[13.5px] leading-[1.55] text-[#5a4f42] focus:outline-none placeholder:text-[#a99a85]"
+                      value={draft.excerpt}
+                      onChange={(e) =>
+                        setDraft({ ...draft, excerpt: e.target.value })
+                      }
+                      placeholder="Short summary for the list page"
+                    />
+                  </div>
+
+                  {/* Author + date */}
+                  <div className="flex justify-between gap-4 border-t border-[#DCD0BF] pt-4">
+                    <div className="min-w-0 flex-1">
+                      <div className={`${labelCls} mb-1.5`}>Author</div>
+                      <input
+                        className={fieldCls}
+                        value={draft.author}
+                        onChange={(e) =>
+                          setDraft({ ...draft, author: e.target.value })
+                        }
+                        placeholder="Grandstyle Events"
+                      />
+                    </div>
+                    <div className="flex-none">
+                      <div className={`${labelCls} mb-1.5 text-right`}>Date</div>
+                      <input
+                        type="date"
+                        className="bg-transparent text-right text-[14px] text-[#231C16] focus:outline-none"
+                        value={draft.publishedAt?.slice(0, 10) || ""}
+                        onChange={(e) =>
+                          setDraft({ ...draft, publishedAt: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                </aside>
               </div>
-
-              {/* Meta */}
-              <div className="bg-paper border border-line rounded-2xl p-5 space-y-4">
-                <div>
-                  <label className={labelCls}>URL slug</label>
-                  <input
-                    className={`${inputCls} mt-2 text-[13px]`}
-                    value={draft.slug}
-                    onChange={(e) =>
-                      setDraft({ ...draft, slug: slugify(e.target.value) })
-                    }
-                    placeholder="auto-from-title"
-                  />
-                  <span className="mt-1 block text-[11px] text-ash truncate">
-                    /blog/{draft.slug || "your-title"}
-                  </span>
-                </div>
-
-                <div>
-                  <label className={labelCls}>Excerpt</label>
-                  <textarea
-                    className={`${inputCls} mt-2 text-[13px] resize-y`}
-                    rows={3}
-                    value={draft.excerpt}
-                    onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })}
-                    placeholder="Short summary for the list page"
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls}>Author</label>
-                  <input
-                    className={`${inputCls} mt-2 text-[13px]`}
-                    value={draft.author}
-                    onChange={(e) => setDraft({ ...draft, author: e.target.value })}
-                    placeholder="Grandstyle Events"
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls}>Publish date</label>
-                  <input
-                    type="date"
-                    className={`${inputCls} mt-2 text-[13px]`}
-                    value={draft.publishedAt?.slice(0, 10) || ""}
-                    onChange={(e) =>
-                      setDraft({ ...draft, publishedAt: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-            </aside>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  // ── Dashboard ─────────────────────────────────────────────────
+  // ── All Posts (list) ──────────────────────────────────────────
   const tabs: { key: Filter; label: string }[] = [
     { key: "all", label: `All ${counts.all}` },
     { key: "published", label: `Published ${counts.published}` },
@@ -455,157 +614,142 @@ const Admin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-cloud">
-      {/* Top bar */}
-      <div className="bg-paper border-b border-line">
-        <div className="container-edge max-w-4xl flex items-center justify-between h-20">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-crimson">
-              Grandstyle Events
-            </p>
-            <h1 className="font-display text-h3">Journal Admin</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={startNew} className="btn-primary">
-              ＋ New post
-            </button>
+    <div className="font-publicsans min-h-screen bg-[#E4DCCD] p-0 md:p-8">
+      <div
+        className={`mx-auto flex min-h-screen max-w-[1200px] overflow-hidden bg-[#ECE5D9] text-[#25201C] md:min-h-[calc(100vh-4rem)] md:rounded-lg ${cardShadow}`}
+      >
+        <Rail onLogout={logout} />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <MobileBar onLogout={logout} />
+
+          {/* Header */}
+          <div className="flex flex-none items-end justify-between border-b border-[#DCD0BF] px-5 pb-4 pt-6 md:px-7">
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A]">
+                Editorial
+              </div>
+              <h1 className="font-spectral mt-0.5 text-[28px] font-semibold text-[#231C16] md:text-[36px]">
+                All Posts
+              </h1>
+            </div>
             <button
-              onClick={logout}
-              className="text-[13px] text-ash hover:text-ink transition-colors"
+              onClick={startNew}
+              className="rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831]"
             >
-              Log out
+              + New post
             </button>
           </div>
-        </div>
-      </div>
 
-      <div className="container-edge max-w-4xl py-8 md:py-10">
-        {notice && (
-          <p className="mb-6 rounded-lg bg-gold/15 px-4 py-3 text-[13px] text-ink">
-            {notice}
-          </p>
-        )}
-        {error && (
-          <p className="mb-6 rounded-lg bg-crimson/10 px-4 py-3 text-[13px] text-crimson">
-            {error}
-          </p>
-        )}
-
-        {/* Filter tabs */}
-        <div className="flex items-center gap-2 mb-6">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setFilter(t.key)}
-              className={`rounded-full px-4 py-1.5 text-[12px] font-medium tracking-wide transition-colors ${
-                filter === t.key
-                  ? "bg-ink text-paper"
-                  : "bg-paper border border-line text-ash hover:text-ink"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {loading && (
-          <p className="py-20 text-center text-ash">Loading…</p>
-        )}
-
-        {!loading && posts.length === 0 && (
-          <div className="bg-paper border border-line rounded-2xl py-20 text-center">
-            <p className="font-display text-h3">No posts yet</p>
-            <p className="mt-2 text-meta text-ash">
-              Create your first story to get started.
-            </p>
-            <button onClick={startNew} className="btn-primary mt-6">
-              ＋ Write your first post
-            </button>
-          </div>
-        )}
-
-        {!loading && posts.length > 0 && (
-          <div className="bg-paper border border-line rounded-2xl overflow-hidden">
-            {visiblePosts.length === 0 ? (
-              <p className="py-16 text-center text-ash">
-                No {filter} posts.
+          <div className="flex-1 overflow-y-auto px-5 py-5 md:px-7">
+            {notice && (
+              <p className="mb-5 rounded-lg bg-[#DDEBDD] px-4 py-3 text-[13px] text-[#2f6b46]">
+                {notice}
               </p>
-            ) : (
-              <ul className="divide-y divide-line">
-                {visiblePosts.map((p) => (
-                  <li
+            )}
+            {error && (
+              <p className="mb-5 rounded-lg bg-[#A6303A]/10 px-4 py-3 text-[13px] text-[#A6303A]">
+                {error}
+              </p>
+            )}
+
+            {/* Filters */}
+            <div className="mb-2 flex items-center gap-2">
+              {tabs.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setFilter(t.key)}
+                  className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                    filter === t.key
+                      ? "bg-[#4E1A21] text-[#F3E7D8]"
+                      : "border border-[#cdbfa9] text-[#6e5f4c] hover:text-[#231C16]"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {loading && (
+              <p className="py-20 text-center text-[#6e5f4c]">Loading…</p>
+            )}
+
+            {!loading && posts.length === 0 && (
+              <div className="py-20 text-center">
+                <p className="font-spectral text-[24px] text-[#231C16]">
+                  No posts yet
+                </p>
+                <p className="mt-2 text-[14px] text-[#6e5f4c]">
+                  Create your first story to get started.
+                </p>
+                <button
+                  onClick={startNew}
+                  className="mt-6 rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831]"
+                >
+                  + Write your first post
+                </button>
+              </div>
+            )}
+
+            {!loading && posts.length > 0 && visiblePosts.length === 0 && (
+              <p className="py-16 text-center text-[#6e5f4c]">No {filter} posts.</p>
+            )}
+
+            {!loading &&
+              visiblePosts.map((p, i) => {
+                const pill = PILL[pillOf(p)];
+                return (
+                  <div
                     key={p._id}
-                    className="flex items-center gap-4 px-4 md:px-5 py-4 hover:bg-cloud/50 transition-colors"
+                    className={`grid grid-cols-[1fr_auto] items-center gap-3 py-4 md:grid-cols-[1fr_130px_120px_auto] md:gap-4 ${
+                      i < visiblePosts.length - 1
+                        ? "border-b border-[#DCD0BF]"
+                        : ""
+                    }`}
                   >
-                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded-md bg-cloud">
-                      {p.coverImageUrl && (
-                        <img
-                          src={p.coverImageUrl}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                    </div>
                     <button
                       onClick={() => startEdit(p)}
-                      className="min-w-0 flex-1 text-left"
+                      className="font-spectral min-w-0 truncate text-left text-[18px] text-[#231C16] hover:text-[#A6303A] md:text-[20px]"
                     >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] ${
-                            p.status === "published"
-                              ? "bg-navy/10 text-navy"
-                              : "bg-ash/15 text-ash"
-                          }`}
-                        >
-                          {p.status}
-                        </span>
-                        <span className="text-[11px] text-ash">
-                          {p.publishedAt
-                            ? new Date(p.publishedAt).toLocaleDateString("en-GB")
-                            : ""}
-                        </span>
-                      </div>
-                      <p className="mt-1 truncate font-display text-[18px] text-ink">
-                        {p.title}
-                      </p>
+                      {p.title}
                     </button>
-                    <div className="flex items-center gap-3 shrink-0 text-[13px]">
+                    <div className="md:justify-self-start">
+                      <span
+                        className={`rounded-[5px] px-2 py-1 text-[11.5px] font-bold tracking-[0.04em] ${pill.cls}`}
+                      >
+                        {pill.label}
+                      </span>
+                    </div>
+                    <div className="hidden text-right text-[13px] text-[#6e5f4c] md:block">
+                      {fmtLong(p.publishedAt)}
+                    </div>
+                    <div className="flex items-center justify-end gap-3 text-[13px]">
                       {p.status === "published" && (
                         <Link
                           to={`/blog/${p.slug}`}
-                          className="text-ash hover:text-ink transition-colors"
+                          className="text-[#6e5f4c] transition-colors hover:text-[#231C16]"
                         >
                           View
                         </Link>
                       )}
                       <button
                         onClick={() => startEdit(p)}
-                        className="text-ink hover:text-crimson transition-colors"
+                        className="text-[#4E1A21] transition-colors hover:text-[#A6303A]"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => remove(p)}
-                        className="text-ash hover:text-crimson transition-colors"
-                        aria-label="Delete"
+                        className="text-[#6e5f4c] transition-colors hover:text-[#A6303A]"
                       >
                         Delete
                       </button>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                  </div>
+                );
+              })}
           </div>
-        )}
-
-        <Link
-          to="/"
-          className="mt-8 inline-block text-[13px] text-ash hover:text-ink transition-colors"
-        >
-          ← Back to site
-        </Link>
+        </div>
       </div>
     </div>
   );

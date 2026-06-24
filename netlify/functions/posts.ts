@@ -31,6 +31,7 @@ interface PostInput {
   title: string;
   slug?: string;
   excerpt?: string;
+  category?: string;
   coverImageUrl?: string;
   body: string;
   author?: string;
@@ -45,6 +46,7 @@ const toDoc = (p: PostInput) => {
     title: p.title || "Untitled",
     slug: { _type: "slug", current: slugCurrent },
     excerpt: p.excerpt || "",
+    category: p.category || "",
     coverImageUrl: p.coverImageUrl || "",
     body: p.body || "",
     author: p.author || "",
@@ -79,7 +81,7 @@ export const handler: Handler = async (event) => {
       case "list": {
         const posts = await client.fetch(
           `*[_type == "post"] | order(publishedAt desc){
-            _id, title, "slug": slug.current, excerpt, coverImageUrl, body, author, publishedAt, status
+            _id, title, "slug": slug.current, excerpt, category, coverImageUrl, body, author, publishedAt, status
           }`
         );
         return json(200, { posts });
