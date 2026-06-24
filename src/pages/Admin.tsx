@@ -4,9 +4,11 @@ import { marked } from "marked";
 import RichEditor from "../components/RichEditor";
 import { adminApi, type PostDraft } from "../lib/adminApi";
 import { uploadImage, cloudinaryConfigured } from "../lib/cloudinary";
-import type { Post } from "../lib/sanity";
+import { sanityConfigured, type Post } from "../lib/sanity";
 
 const PW_KEY = "gs_admin_pw";
+const AUTHOR_KEY = "gs_default_author";
+const DATASET = (import.meta.env.VITE_SANITY_DATASET as string) || "production";
 
 // Posts now store HTML. Older posts were authored in Markdown — convert those
 // to HTML when loading them into the editor so they show formatted.
@@ -25,7 +27,9 @@ const emptyDraft = (): PostDraft => ({
   category: "",
   coverImageUrl: "",
   body: "",
-  author: "",
+  author:
+    (typeof localStorage !== "undefined" && localStorage.getItem(AUTHOR_KEY)) ||
+    "",
   publishedAt: new Date().toISOString().slice(0, 10),
   status: "draft",
 });
@@ -62,27 +66,95 @@ const PILL: Record<PillState, { label: string; cls: string }> = {
 
 const labelCls =
   "text-[11px] font-bold uppercase tracking-[0.18em] text-[#A6303A]";
-const fieldCls =
-  "w-full bg-transparent text-[#231C16] text-[14px] focus:outline-none placeholder:text-[#a99a85]";
+// Bordered, clearly-editable field used across the editor sidebar + settings.
+const sideField =
+  "w-full rounded-[7px] border border-[#cdbfa9] bg-[#F3ECE0] px-3 py-2 text-[14px] text-[#231C16] transition-colors focus:border-[#A6303A] focus:outline-none placeholder:text-[#a99a85]";
 
 type Filter = "all" | "published" | "draft";
+type View = "dashboard" | "posts" | "media" | "settings";
 
-// ── Left navigation rail (shared by list + editor) ───────────────
+// Extract every image URL referenced by the posts (covers + inline body imgs).
+const collectMedia = (posts: Post[]) => {
+  const set = new Set<string>();
+  posts.forEach((p) => {
+    if (p.coverImageUrl) set.add(p.coverImageUrl);
+    const body = p.body || "";
+    const re = /<img[^>]+src="([^"]+)"/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(body))) set.add(m[1]);
+  });
+  return Array.from(set);
+};
+
+// ── Left navigation rail (shared) ────────────────────────────────
 const RailIcon = ({ d }: { d: React.ReactNode }) => (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     {d}
   </svg>
 );
 
-const Rail = ({ onLogout }: { onLogout: () => void }) => {
+const NAV: { key: View; label: string; icon: React.ReactNode }[] = [
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    icon: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </>
+    ),
+  },
+  {
+    key: "posts",
+    label: "Posts",
+    icon: (
+      <>
+        <path d="M6 3h8l4 4v14H6z" />
+        <path d="M14 3v4h4" />
+        <path d="M9 12h6M9 16h5" />
+      </>
+    ),
+  },
+  {
+    key: "media",
+    label: "Media",
+    icon: (
+      <>
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="8.5" cy="9.5" r="1.6" />
+        <path d="M21 16l-5-5L4 20" />
+      </>
+    ),
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M18.5 5.5l-2 2M7.5 16.5l-2 2" />
+      </>
+    ),
+  },
+];
+
+const Rail = ({
+  view,
+  onNavigate,
+  onLogout,
+}: {
+  view: View;
+  onNavigate: (v: View) => void;
+  onLogout: () => void;
+}) => {
   const item = (active: boolean) =>
-    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
+    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] text-left transition-colors ${
       active
         ? "bg-[rgba(201,154,91,0.18)] font-semibold text-[#F3E7D8]"
-        : "text-[#caa78f]"
+        : "text-[#caa78f] hover:bg-[rgba(231,214,198,0.08)] hover:text-[#F3E7D8]"
     }`;
-  const inert =
-    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] text-[#caa78f] opacity-60 cursor-default";
   return (
     <aside className="hidden w-[212px] flex-none flex-col bg-[#4E1A21] px-[18px] py-[26px] text-[#E7D6C6] md:flex">
       <div className="font-spectral border-b border-[rgba(231,214,198,0.16)] px-2 pb-[22px] text-[21px] leading-[1.05] text-[#F3E7D8]">
@@ -92,22 +164,16 @@ const Rail = ({ onLogout }: { onLogout: () => void }) => {
       </div>
 
       <nav className="mt-[18px] flex flex-col gap-[3px]">
-        <span className={item(false)} title="Coming soon">
-          <RailIcon d={<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>} />
-          Dashboard
-        </span>
-        <span className={item(true)}>
-          <RailIcon d={<><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 12h6M9 16h5" /></>} />
-          Posts
-        </span>
-        <span className={inert} title="Coming soon">
-          <RailIcon d={<><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="M21 16l-5-5L4 20" /></>} />
-          Media
-        </span>
-        <span className={inert} title="Coming soon">
-          <RailIcon d={<><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M18.5 5.5l-2 2M7.5 16.5l-2 2" /></>} />
-          Settings
-        </span>
+        {NAV.map((n) => (
+          <button
+            key={n.key}
+            onClick={() => onNavigate(n.key)}
+            className={item(view === n.key)}
+          >
+            <RailIcon d={n.icon} />
+            {n.label}
+          </button>
+        ))}
       </nav>
 
       <div className="mt-auto border-t border-[rgba(231,214,198,0.16)] pt-3">
@@ -136,19 +202,51 @@ const Rail = ({ onLogout }: { onLogout: () => void }) => {
   );
 };
 
-// Slim burgundy bar for mobile (rail is hidden below md).
-const MobileBar = ({ onLogout }: { onLogout: () => void }) => (
-  <div className="flex items-center justify-between bg-[#4E1A21] px-5 py-3 text-[#E7D6C6] md:hidden">
-    <span className="font-spectral text-[17px] text-[#F3E7D8]">
-      Grandstyle <span className="text-[#C99A5B]">Journal</span>
-    </span>
-    <button onClick={onLogout} className="text-[13px] text-[#caa78f]">
-      Log out
-    </button>
+// Mobile burgundy bar with a compact nav (rail is hidden below md).
+const MobileBar = ({
+  view,
+  onNavigate,
+  onLogout,
+}: {
+  view: View;
+  onNavigate: (v: View) => void;
+  onLogout: () => void;
+}) => (
+  <div className="bg-[#4E1A21] px-4 py-3 text-[#E7D6C6] md:hidden">
+    <div className="flex items-center justify-between">
+      <span className="font-spectral text-[17px] text-[#F3E7D8]">
+        Grandstyle <span className="text-[#C99A5B]">Journal</span>
+      </span>
+      <div className="flex items-center gap-3 text-[12px]">
+        <Link to="/" className="text-[#caa78f]">
+          View site ↗
+        </Link>
+        <button onClick={onLogout} className="text-[#caa78f]">
+          Log out
+        </button>
+      </div>
+    </div>
+    <div className="mt-2 flex gap-1.5 overflow-x-auto">
+      {NAV.map((n) => (
+        <button
+          key={n.key}
+          onClick={() => onNavigate(n.key)}
+          className={`whitespace-nowrap rounded-full px-3 py-1 text-[12px] ${
+            view === n.key
+              ? "bg-[rgba(201,154,91,0.22)] font-semibold text-[#F3E7D8]"
+              : "text-[#caa78f]"
+          }`}
+        >
+          {n.label}
+        </button>
+      ))}
+    </div>
   </div>
 );
 
 const cardShadow = "shadow-[0_24px_60px_-24px_rgba(70,46,32,0.34)]";
+const redBtn =
+  "rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831]";
 
 const Admin = () => {
   const [password, setPassword] = useState<string>(
@@ -166,14 +264,26 @@ const Admin = () => {
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
+  const [view, setView] = useState<View>("dashboard");
+
+  // Media library: images uploaded this session + a copy-confirmation flag.
+  const [sessionMedia, setSessionMedia] = useState<string[]>([]);
+  const [copied, setCopied] = useState("");
+
+  // Settings: default author persisted locally.
+  const [defaultAuthor, setDefaultAuthor] = useState(
+    () =>
+      (typeof localStorage !== "undefined" &&
+        localStorage.getItem(AUTHOR_KEY)) ||
+      ""
+  );
 
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.title = "Journal Admin · Grandstyle Events";
     window.scrollTo(0, 0);
-    // Load the Magazine fonts only when the admin mounts (keeps the public
-    // site bundle/network clean).
     const id = "gs-admin-fonts";
     if (!document.getElementById(id)) {
       const link = document.createElement("link");
@@ -199,7 +309,6 @@ const Admin = () => {
     }
   };
 
-  // Try existing session password on mount.
   useEffect(() => {
     if (password) {
       loadPosts(password).catch(() => {
@@ -226,9 +335,17 @@ const Admin = () => {
     setAuthed(false);
     setDraft(null);
     setPwInput("");
+    setView("dashboard");
   };
 
   const refresh = () => loadPosts(password).catch(() => {});
+
+  const navigate = (v: View) => {
+    setDraft(null);
+    setNotice("");
+    setError("");
+    setView(v);
+  };
 
   const startNew = () => {
     setNotice("");
@@ -246,7 +363,6 @@ const Admin = () => {
     });
   };
 
-  // Cover image upload (the editor handles in-body images itself).
   const onUploadCover = async (file: File) => {
     setUploading(true);
     setError("");
@@ -260,15 +376,44 @@ const Admin = () => {
     }
   };
 
-  // Passed to the editor: upload, surface errors here, return the URL to insert.
   const uploadInlineImage = async (file: File) => {
     setError("");
     try {
-      return await uploadImage(file);
+      const url = await uploadImage(file);
+      setSessionMedia((m) => [url, ...m]);
+      return url;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Image upload failed.");
       throw e;
     }
+  };
+
+  const onUploadMedia = async (file: File) => {
+    setUploading(true);
+    setError("");
+    try {
+      const url = await uploadImage(file);
+      setSessionMedia((m) => [url, ...m]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const copyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(url);
+      window.setTimeout(() => setCopied(""), 1500);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
+
+  const saveDefaultAuthor = () => {
+    localStorage.setItem(AUTHOR_KEY, defaultAuthor);
+    setNotice("Default author saved ✓");
   };
 
   const save = async (status: "draft" | "published") => {
@@ -296,6 +441,7 @@ const Admin = () => {
       }
       setNotice(status === "published" ? "Published ✓" : "Saved as draft ✓");
       setDraft(null);
+      setView("posts");
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed.");
@@ -318,11 +464,17 @@ const Admin = () => {
   const counts = useMemo(
     () => ({
       all: posts.length,
-      published: posts.filter((p) => p.status === "published").length,
+      published: posts.filter((p) => pillOf(p) === "live").length,
+      scheduled: posts.filter((p) => pillOf(p) === "scheduled").length,
       draft: posts.filter((p) => p.status === "draft").length,
     }),
     [posts]
   );
+
+  const media = useMemo(() => {
+    const fromPosts = collectMedia(posts);
+    return Array.from(new Set([...sessionMedia, ...fromPosts]));
+  }, [posts, sessionMedia]);
 
   const visiblePosts = posts.filter((p) =>
     filter === "all" ? true : p.status === filter
@@ -381,16 +533,16 @@ const Admin = () => {
         <div
           className={`mx-auto flex min-h-screen max-w-[1200px] overflow-hidden bg-[#ECE5D9] text-[#25201C] md:min-h-[calc(100vh-4rem)] md:rounded-lg ${cardShadow}`}
         >
-          <Rail onLogout={logout} />
+          <Rail view="posts" onNavigate={navigate} onLogout={logout} />
 
           <div className="flex min-w-0 flex-1 flex-col">
-            <MobileBar onLogout={logout} />
+            <MobileBar view="posts" onNavigate={navigate} onLogout={logout} />
 
             {/* Top bar */}
             <div className="flex flex-none flex-wrap items-center justify-between gap-3 border-b border-[#DCD0BF] bg-[#F3ECE0] px-5 py-3 md:h-16 md:px-7 md:py-0">
               <div className="text-[13px] text-[#8a7d6a]">
                 <button
-                  onClick={() => setDraft(null)}
+                  onClick={() => navigate("posts")}
                   className="text-[#a99a85] transition-colors hover:text-[#4E1A21]"
                 >
                   Posts
@@ -422,7 +574,7 @@ const Admin = () => {
                 <button
                   onClick={() => save("published")}
                   disabled={saving}
-                  className="rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831] disabled:opacity-50"
+                  className={`${redBtn} disabled:opacity-50`}
                 >
                   {saving
                     ? "Saving…"
@@ -450,7 +602,7 @@ const Admin = () => {
                       setDraft({ ...draft, category: e.target.value })
                     }
                     placeholder="WEDDINGS · FEATURE (optional kicker)"
-                    className="w-full bg-transparent text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A] placeholder:text-[#A6303A]/40 focus:outline-none"
+                    className="-mx-2 w-[calc(100%+1rem)] rounded-md bg-transparent px-2 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A] transition-colors placeholder:text-[#A6303A]/40 focus:bg-[#F3ECE0] focus:outline-none"
                   />
                   <input
                     value={draft.title}
@@ -466,7 +618,7 @@ const Admin = () => {
                       })
                     }
                     placeholder="Post title"
-                    className="font-spectral mt-3 w-full bg-transparent text-[clamp(2rem,4.5vw,50px)] font-medium leading-[1.04] tracking-[-0.01em] text-[#231C16] placeholder:text-[#231C16]/30 focus:outline-none"
+                    className="font-spectral -mx-2 mt-2 w-[calc(100%+1rem)] rounded-md bg-transparent px-2 py-1 text-[clamp(2rem,4.5vw,50px)] font-medium leading-[1.04] tracking-[-0.01em] text-[#231C16] transition-colors placeholder:text-[#231C16]/30 focus:bg-[#F3ECE0] focus:outline-none"
                   />
                   <div className="my-[22px] h-[2px] bg-gradient-to-r from-[#C99A5B] to-transparent" />
 
@@ -533,7 +685,7 @@ const Admin = () => {
                       }}
                     />
                     <input
-                      className={`${fieldCls} mt-2.5 rounded-[7px] border border-[#cdbfa9] bg-[#F3ECE0] px-3 py-2 text-[13px]`}
+                      className={`${sideField} mt-2.5 text-[13px]`}
                       value={draft.coverImageUrl}
                       onChange={(e) =>
                         setDraft({ ...draft, coverImageUrl: e.target.value })
@@ -545,10 +697,10 @@ const Admin = () => {
                   {/* URL slug */}
                   <div className="border-t border-[#DCD0BF] pt-4">
                     <div className={`${labelCls} mb-2`}>URL slug</div>
-                    <div className="font-spectral flex items-center text-[15px] text-[#231C16]">
+                    <div className="flex items-center rounded-[7px] border border-[#cdbfa9] bg-[#F3ECE0] px-3 py-2 text-[14px] focus-within:border-[#A6303A]">
                       <span className="text-[#a99a85]">/blog/</span>
                       <input
-                        className="font-spectral w-full bg-transparent focus:outline-none"
+                        className="w-full bg-transparent text-[#231C16] focus:outline-none"
                         value={draft.slug}
                         onChange={(e) =>
                           setDraft({ ...draft, slug: slugify(e.target.value) })
@@ -563,7 +715,7 @@ const Admin = () => {
                     <div className={`${labelCls} mb-2`}>Excerpt</div>
                     <textarea
                       rows={3}
-                      className="w-full resize-y bg-transparent text-[13.5px] leading-[1.55] text-[#5a4f42] focus:outline-none placeholder:text-[#a99a85]"
+                      className={`${sideField} resize-y text-[13.5px] leading-[1.55]`}
                       value={draft.excerpt}
                       onChange={(e) =>
                         setDraft({ ...draft, excerpt: e.target.value })
@@ -573,28 +725,30 @@ const Admin = () => {
                   </div>
 
                   {/* Author + date */}
-                  <div className="flex justify-between gap-4 border-t border-[#DCD0BF] pt-4">
-                    <div className="min-w-0 flex-1">
-                      <div className={`${labelCls} mb-1.5`}>Author</div>
-                      <input
-                        className={fieldCls}
-                        value={draft.author}
-                        onChange={(e) =>
-                          setDraft({ ...draft, author: e.target.value })
-                        }
-                        placeholder="Grandstyle Events"
-                      />
-                    </div>
-                    <div className="flex-none">
-                      <div className={`${labelCls} mb-1.5 text-right`}>Date</div>
-                      <input
-                        type="date"
-                        className="bg-transparent text-right text-[14px] text-[#231C16] focus:outline-none"
-                        value={draft.publishedAt?.slice(0, 10) || ""}
-                        onChange={(e) =>
-                          setDraft({ ...draft, publishedAt: e.target.value })
-                        }
-                      />
+                  <div className="border-t border-[#DCD0BF] pt-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <div className={`${labelCls} mb-1.5`}>Author</div>
+                        <input
+                          className={sideField}
+                          value={draft.author}
+                          onChange={(e) =>
+                            setDraft({ ...draft, author: e.target.value })
+                          }
+                          placeholder="Grandstyle Events"
+                        />
+                      </div>
+                      <div>
+                        <div className={`${labelCls} mb-1.5`}>Date</div>
+                        <input
+                          type="date"
+                          className={sideField}
+                          value={draft.publishedAt?.slice(0, 10) || ""}
+                          onChange={(e) =>
+                            setDraft({ ...draft, publishedAt: e.target.value })
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 </aside>
@@ -606,40 +760,82 @@ const Admin = () => {
     );
   }
 
-  // ── All Posts (list) ──────────────────────────────────────────
+  // ── Shell for dashboard / posts / media / settings ────────────
+  const recent = posts.slice(0, 5);
+  const statCards = [
+    { label: "All posts", value: counts.all },
+    { label: "Published", value: counts.published },
+    { label: "Drafts", value: counts.draft },
+    { label: "Scheduled", value: counts.scheduled },
+  ];
   const tabs: { key: Filter; label: string }[] = [
     { key: "all", label: `All ${counts.all}` },
     { key: "published", label: `Published ${counts.published}` },
     { key: "draft", label: `Drafts ${counts.draft}` },
   ];
 
+  const header = (kicker: string, title: string, action?: React.ReactNode) => (
+    <div className="flex flex-none items-end justify-between border-b border-[#DCD0BF] px-5 pb-4 pt-6 md:px-7">
+      <div>
+        <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A]">
+          {kicker}
+        </div>
+        <h1 className="font-spectral mt-0.5 text-[28px] font-semibold text-[#231C16] md:text-[36px]">
+          {title}
+        </h1>
+      </div>
+      {action}
+    </div>
+  );
+
   return (
     <div className="font-publicsans min-h-screen bg-[#E4DCCD] p-0 md:p-8">
       <div
         className={`mx-auto flex min-h-screen max-w-[1200px] overflow-hidden bg-[#ECE5D9] text-[#25201C] md:min-h-[calc(100vh-4rem)] md:rounded-lg ${cardShadow}`}
       >
-        <Rail onLogout={logout} />
+        <Rail view={view} onNavigate={navigate} onLogout={logout} />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <MobileBar onLogout={logout} />
+          <MobileBar view={view} onNavigate={navigate} onLogout={logout} />
 
-          {/* Header */}
-          <div className="flex flex-none items-end justify-between border-b border-[#DCD0BF] px-5 pb-4 pt-6 md:px-7">
-            <div>
-              <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#A6303A]">
-                Editorial
-              </div>
-              <h1 className="font-spectral mt-0.5 text-[28px] font-semibold text-[#231C16] md:text-[36px]">
-                All Posts
-              </h1>
-            </div>
-            <button
-              onClick={startNew}
-              className="rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831]"
-            >
-              + New post
-            </button>
-          </div>
+          {/* DASHBOARD */}
+          {view === "dashboard" &&
+            header(
+              "Overview",
+              "Dashboard",
+              <button onClick={startNew} className={redBtn}>
+                + New post
+              </button>
+            )}
+
+          {/* POSTS */}
+          {view === "posts" &&
+            header(
+              "Editorial",
+              "All Posts",
+              <button onClick={startNew} className={redBtn}>
+                + New post
+              </button>
+            )}
+
+          {/* MEDIA */}
+          {view === "media" &&
+            header(
+              "Library",
+              "Media",
+              cloudinaryConfigured ? (
+                <button
+                  onClick={() => mediaInputRef.current?.click()}
+                  disabled={uploading}
+                  className={`${redBtn} disabled:opacity-50`}
+                >
+                  {uploading ? "Uploading…" : "+ Upload image"}
+                </button>
+              ) : undefined
+            )}
+
+          {/* SETTINGS */}
+          {view === "settings" && header("Configuration", "Settings")}
 
           <div className="flex-1 overflow-y-auto px-5 py-5 md:px-7">
             {notice && (
@@ -652,102 +848,307 @@ const Admin = () => {
                 {error}
               </p>
             )}
-
-            {/* Filters */}
-            <div className="mb-2 flex items-center gap-2">
-              {tabs.map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => setFilter(t.key)}
-                  className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
-                    filter === t.key
-                      ? "bg-[#4E1A21] text-[#F3E7D8]"
-                      : "border border-[#cdbfa9] text-[#6e5f4c] hover:text-[#231C16]"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-
-            {loading && (
+            {loading && view !== "settings" && (
               <p className="py-20 text-center text-[#6e5f4c]">Loading…</p>
             )}
 
-            {!loading && posts.length === 0 && (
-              <div className="py-20 text-center">
-                <p className="font-spectral text-[24px] text-[#231C16]">
-                  No posts yet
-                </p>
-                <p className="mt-2 text-[14px] text-[#6e5f4c]">
-                  Create your first story to get started.
-                </p>
-                <button
-                  onClick={startNew}
-                  className="mt-6 rounded-[7px] bg-[#A6303A] px-5 py-2.5 text-[13px] font-bold text-[#F3E7D8] transition-colors hover:bg-[#8f2831]"
-                >
-                  + Write your first post
-                </button>
-              </div>
-            )}
-
-            {!loading && posts.length > 0 && visiblePosts.length === 0 && (
-              <p className="py-16 text-center text-[#6e5f4c]">No {filter} posts.</p>
-            )}
-
-            {!loading &&
-              visiblePosts.map((p, i) => {
-                const pill = PILL[pillOf(p)];
-                return (
-                  <div
-                    key={p._id}
-                    className={`grid grid-cols-[1fr_auto] items-center gap-3 py-4 md:grid-cols-[1fr_130px_120px_auto] md:gap-4 ${
-                      i < visiblePosts.length - 1
-                        ? "border-b border-[#DCD0BF]"
-                        : ""
-                    }`}
-                  >
-                    <button
-                      onClick={() => startEdit(p)}
-                      className="font-spectral min-w-0 truncate text-left text-[18px] text-[#231C16] hover:text-[#A6303A] md:text-[20px]"
+            {/* ── DASHBOARD body ── */}
+            {view === "dashboard" && !loading && (
+              <>
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                  {statCards.map((s) => (
+                    <div
+                      key={s.label}
+                      className="rounded-lg border border-[#DCD0BF] bg-[#F3ECE0] p-5"
                     >
-                      {p.title}
-                    </button>
-                    <div className="md:justify-self-start">
-                      <span
-                        className={`rounded-[5px] px-2 py-1 text-[11.5px] font-bold tracking-[0.04em] ${pill.cls}`}
+                      <div className="font-spectral text-[34px] leading-none text-[#231C16]">
+                        {s.value}
+                      </div>
+                      <div className="mt-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6e5f4c]">
+                        {s.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 flex items-center justify-between">
+                  <div className={labelCls}>Recent posts</div>
+                  <button
+                    onClick={() => navigate("posts")}
+                    className="text-[13px] font-semibold text-[#A6303A] hover:underline"
+                  >
+                    View all →
+                  </button>
+                </div>
+                <div className="mt-3">
+                  {recent.length === 0 ? (
+                    <p className="py-10 text-center text-[#6e5f4c]">
+                      No posts yet.{" "}
+                      <button
+                        onClick={startNew}
+                        className="font-semibold text-[#A6303A] hover:underline"
                       >
-                        {pill.label}
-                      </span>
-                    </div>
-                    <div className="hidden text-right text-[13px] text-[#6e5f4c] md:block">
-                      {fmtLong(p.publishedAt)}
-                    </div>
-                    <div className="flex items-center justify-end gap-3 text-[13px]">
-                      {p.status === "published" && (
-                        <Link
-                          to={`/blog/${p.slug}`}
-                          className="text-[#6e5f4c] transition-colors hover:text-[#231C16]"
+                        Write your first →
+                      </button>
+                    </p>
+                  ) : (
+                    recent.map((p, i) => {
+                      const pill = PILL[pillOf(p)];
+                      return (
+                        <button
+                          key={p._id}
+                          onClick={() => startEdit(p)}
+                          className={`flex w-full items-center justify-between gap-4 py-3 text-left ${
+                            i < recent.length - 1
+                              ? "border-b border-[#DCD0BF]"
+                              : ""
+                          }`}
                         >
-                          View
-                        </Link>
-                      )}
+                          <span className="font-spectral min-w-0 truncate text-[18px] text-[#231C16]">
+                            {p.title}
+                          </span>
+                          <span className="flex flex-none items-center gap-3">
+                            <span
+                              className={`rounded-[5px] px-2 py-1 text-[11px] font-bold tracking-[0.04em] ${pill.cls}`}
+                            >
+                              {pill.label}
+                            </span>
+                            <span className="hidden text-[13px] text-[#6e5f4c] sm:block">
+                              {fmtLong(p.publishedAt)}
+                            </span>
+                          </span>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* ── POSTS body ── */}
+            {view === "posts" && !loading && (
+              <>
+                <div className="mb-2 flex items-center gap-2">
+                  {tabs.map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => setFilter(t.key)}
+                      className={`rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                        filter === t.key
+                          ? "bg-[#4E1A21] text-[#F3E7D8]"
+                          : "border border-[#cdbfa9] text-[#6e5f4c] hover:text-[#231C16]"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                {posts.length === 0 && (
+                  <div className="py-20 text-center">
+                    <p className="font-spectral text-[24px] text-[#231C16]">
+                      No posts yet
+                    </p>
+                    <p className="mt-2 text-[14px] text-[#6e5f4c]">
+                      Create your first story to get started.
+                    </p>
+                    <button onClick={startNew} className={`${redBtn} mt-6`}>
+                      + Write your first post
+                    </button>
+                  </div>
+                )}
+
+                {posts.length > 0 && visiblePosts.length === 0 && (
+                  <p className="py-16 text-center text-[#6e5f4c]">
+                    No {filter} posts.
+                  </p>
+                )}
+
+                {visiblePosts.map((p, i) => {
+                  const pill = PILL[pillOf(p)];
+                  return (
+                    <div
+                      key={p._id}
+                      className={`grid grid-cols-[1fr_auto] items-center gap-3 py-4 md:grid-cols-[1fr_130px_120px_auto] md:gap-4 ${
+                        i < visiblePosts.length - 1
+                          ? "border-b border-[#DCD0BF]"
+                          : ""
+                      }`}
+                    >
                       <button
                         onClick={() => startEdit(p)}
-                        className="text-[#4E1A21] transition-colors hover:text-[#A6303A]"
+                        className="font-spectral min-w-0 truncate text-left text-[18px] text-[#231C16] hover:text-[#A6303A] md:text-[20px]"
                       >
-                        Edit
+                        {p.title}
                       </button>
-                      <button
-                        onClick={() => remove(p)}
-                        className="text-[#6e5f4c] transition-colors hover:text-[#A6303A]"
-                      >
-                        Delete
-                      </button>
+                      <div className="md:justify-self-start">
+                        <span
+                          className={`rounded-[5px] px-2 py-1 text-[11.5px] font-bold tracking-[0.04em] ${pill.cls}`}
+                        >
+                          {pill.label}
+                        </span>
+                      </div>
+                      <div className="hidden text-right text-[13px] text-[#6e5f4c] md:block">
+                        {fmtLong(p.publishedAt)}
+                      </div>
+                      <div className="flex items-center justify-end gap-3 text-[13px]">
+                        {p.status === "published" && (
+                          <Link
+                            to={`/blog/${p.slug}`}
+                            className="text-[#6e5f4c] transition-colors hover:text-[#231C16]"
+                          >
+                            View
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => startEdit(p)}
+                          className="text-[#4E1A21] transition-colors hover:text-[#A6303A]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => remove(p)}
+                          className="text-[#6e5f4c] transition-colors hover:text-[#A6303A]"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
+                  );
+                })}
+              </>
+            )}
+
+            {/* ── MEDIA body ── */}
+            {view === "media" && !loading && (
+              <>
+                <input
+                  ref={mediaInputRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onUploadMedia(f);
+                    e.target.value = "";
+                  }}
+                />
+                <p className="mb-4 text-[13px] text-[#6e5f4c]">
+                  Every image used across your posts, plus anything you upload
+                  here. Click “Copy URL” to reuse one in a post.
+                </p>
+                {media.length === 0 ? (
+                  <div className="py-20 text-center">
+                    <p className="font-spectral text-[22px] text-[#231C16]">
+                      No images yet
+                    </p>
+                    <p className="mt-2 text-[14px] text-[#6e5f4c]">
+                      {cloudinaryConfigured
+                        ? "Upload an image to start your library."
+                        : "Image uploads are not configured."}
+                    </p>
                   </div>
-                );
-              })}
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    {media.map((url) => (
+                      <div
+                        key={url}
+                        className="overflow-hidden rounded-lg border border-[#DCD0BF] bg-[#F3ECE0]"
+                      >
+                        <div className="aspect-[4/3] bg-[#E4DCCD]">
+                          <img
+                            src={url}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <button
+                          onClick={() => copyUrl(url)}
+                          className="w-full px-3 py-2 text-left text-[12px] font-semibold text-[#4E1A21] transition-colors hover:bg-[#E4DCCD]"
+                        >
+                          {copied === url ? "Copied ✓" : "Copy URL"}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ── SETTINGS body ── */}
+            {view === "settings" && (
+              <div className="max-w-xl space-y-6">
+                {/* Default author */}
+                <div className="rounded-lg border border-[#DCD0BF] bg-[#F3ECE0] p-5">
+                  <div className={labelCls}>Default author</div>
+                  <p className="mt-1 text-[13px] text-[#6e5f4c]">
+                    Pre-filled on every new post.
+                  </p>
+                  <div className="mt-3 flex gap-3">
+                    <input
+                      className={sideField}
+                      value={defaultAuthor}
+                      onChange={(e) => setDefaultAuthor(e.target.value)}
+                      placeholder="Grandstyle Events"
+                    />
+                    <button
+                      onClick={saveDefaultAuthor}
+                      className="flex-none rounded-[7px] border border-[#cdbfa9] px-4 text-[13px] font-semibold text-[#4E1A21] transition-colors hover:border-[#A6303A]"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
+                {/* Connections */}
+                <div className="rounded-lg border border-[#DCD0BF] bg-[#F3ECE0] p-5">
+                  <div className={labelCls}>Connections</div>
+                  <ul className="mt-3 space-y-2.5 text-[14px] text-[#231C16]">
+                    <li className="flex items-center justify-between">
+                      <span>Content store (Sanity)</span>
+                      <span
+                        className={`rounded-[5px] px-2 py-1 text-[11.5px] font-bold ${
+                          sanityConfigured
+                            ? "bg-[#DDEBDD] text-[#2f6b46]"
+                            : "bg-[#F4E7CB] text-[#9a6a18]"
+                        }`}
+                      >
+                        {sanityConfigured ? `CONNECTED · ${DATASET}` : "NOT SET"}
+                      </span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>Image uploads (Cloudinary)</span>
+                      <span
+                        className={`rounded-[5px] px-2 py-1 text-[11.5px] font-bold ${
+                          cloudinaryConfigured
+                            ? "bg-[#DDEBDD] text-[#2f6b46]"
+                            : "bg-[#F4E7CB] text-[#9a6a18]"
+                        }`}
+                      >
+                        {cloudinaryConfigured ? "CONNECTED" : "NOT SET"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Security */}
+                <div className="rounded-lg border border-[#DCD0BF] bg-[#F3ECE0] p-5">
+                  <div className={labelCls}>Security</div>
+                  <p className="mt-2 text-[13px] leading-relaxed text-[#6e5f4c]">
+                    The admin password is managed as a server environment
+                    variable on Netlify (<code>ADMIN_PASSWORD</code>). To change
+                    it, update that variable and redeploy.
+                  </p>
+                  <button
+                    onClick={logout}
+                    className="mt-4 rounded-[7px] border border-[#cdbfa9] px-4 py-2 text-[13px] font-semibold text-[#A6303A] transition-colors hover:border-[#A6303A]"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
