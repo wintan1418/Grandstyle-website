@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import MagneticButton from "./MagneticButton";
 
 const LOGO_URL =
-  "https://res.cloudinary.com/wintan1418/image/upload/w_600,c_fit,q_auto:best,f_auto/v1743877057/logo%20folder/grandstyle%20logo.png";
+  "https://res.cloudinary.com/v3bh8bz0/image/upload/w_600,c_fit,q_auto:best,f_auto/v1789397303/logo%20folder/grandstyle%20logo.png";
 
 const navItems = [
   { label: "About", target: "manifesto" },

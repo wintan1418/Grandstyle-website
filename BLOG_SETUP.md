@@ -39,10 +39,22 @@ Site settings → Environment variables.
    (allow credentials).
 
 ## Cloudinary setup (one-time)
+The site lives on cloud `v3bh8bz0`. Its unsigned preset `grandstyle` (uploads land
+in the `journal/` folder) was created by `scripts/migrate-cloudinary.mjs`.
+
+To do it by hand instead:
 1. Settings → Upload → Upload presets → **Add** → set **Signing Mode = Unsigned**.
-2. (Optional) set a folder like `grandstyle/blog`.
+2. (Optional) set a folder like `journal`.
 3. Put the preset name in `VITE_CLOUDINARY_UPLOAD_PRESET`.
-   (No API key/secret needed — unsigned uploads don't use them.)
+   (No API key/secret needed in Netlify — unsigned uploads don't use them.)
+
+### Moving to another Cloudinary account
+1. Put the new account's `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` /
+   `CLOUDINARY_API_SECRET` in `.env`, and the current cloud in `OLD_CLOUDINARY_CLOUD_NAME`.
+2. `node scripts/migrate-cloudinary.mjs` — creates the preset and copies every asset
+   listed in the script (same public IDs) into the new cloud.
+3. Search the repo for `res.cloudinary.com/<old cloud>` and swap the cloud name.
+4. Update `VITE_CLOUDINARY_CLOUD_NAME` in Netlify and redeploy.
 
 ## Running locally
 - `npm run dev` — runs the site, but the `/admin` write API needs the function.

@@ -10,7 +10,7 @@ type BlurImageProps = {
   priority?: boolean;
 };
 
-const BASE = "https://res.cloudinary.com/wintan1418/image/upload";
+const BASE = "https://res.cloudinary.com/v3bh8bz0/image/upload";
 
 const buildSrc = (publicId: string, w: number, h: number) =>
   `${BASE}/c_fill,w_${w},h_${h},g_auto,q_auto:best,f_auto/${publicId}`;

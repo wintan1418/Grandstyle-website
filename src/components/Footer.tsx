@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import DeveloperCredit from "./DeveloperCredit";
 
 const LOGO_URL =
-  "https://res.cloudinary.com/wintan1418/image/upload/c_thumb,w_200,g_face/v1743877057/logo%20folder/grandstyle%20logo.png";
+  "https://res.cloudinary.com/v3bh8bz0/image/upload/c_thumb,w_200,g_face/v1789397303/logo%20folder/grandstyle%20logo.png";
 
 const services = [
   "Weddings",
