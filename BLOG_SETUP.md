@@ -40,19 +40,21 @@ Site settings → Environment variables.
 
 ## Cloudinary setup (one-time)
 The site lives on cloud `v3bh8bz0`. Its unsigned preset `grandstyle` (uploads land
-in the `journal/` folder) was created by `scripts/migrate-cloudinary.mjs`.
+in the `grandstyle/blog` folder) was created by `scripts/migrate-cloudinary.mjs`.
 
 To do it by hand instead:
 1. Settings → Upload → Upload presets → **Add** → set **Signing Mode = Unsigned**.
-2. (Optional) set a folder like `journal`.
+2. (Optional) set a folder like `grandstyle/blog`.
 3. Put the preset name in `VITE_CLOUDINARY_UPLOAD_PRESET`.
    (No API key/secret needed in Netlify — unsigned uploads don't use them.)
 
 ### Moving to another Cloudinary account
 1. Put the new account's `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` /
-   `CLOUDINARY_API_SECRET` in `.env`, and the current cloud in `OLD_CLOUDINARY_CLOUD_NAME`.
-2. `node scripts/migrate-cloudinary.mjs` — creates the preset and copies every asset
-   listed in the script (same public IDs) into the new cloud.
+   `CLOUDINARY_API_SECRET` in `.env`, and the current account's cloud name, key and
+   secret in `OLD_CLOUDINARY_CLOUD_NAME` / `OLD_CLOUDINARY_API_KEY` / `OLD_CLOUDINARY_API_SECRET`.
+2. `node scripts/migrate-cloudinary.mjs` — copies the presets, named transformations
+   and every asset (same public IDs, folders, tags) into the new cloud, then verifies
+   nothing is missing. Safe to re-run; it skips what is already there.
 3. Search the repo for `res.cloudinary.com/<old cloud>` and swap the cloud name.
 4. Update `VITE_CLOUDINARY_CLOUD_NAME` in Netlify and redeploy.
 
