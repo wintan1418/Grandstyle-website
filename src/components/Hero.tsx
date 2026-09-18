@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import MagneticButton from "./MagneticButton";
 
 const HERO_VIDEO =
-  "https://res.cloudinary.com/v3bh8bz0/video/upload/v1789400370/featured/grandstyle_clip_v2.mp4";
+  "https://res.cloudinary.com/v3bh8bz0/video/upload/v1789742544/featured/grandstyle_final.mp4";
 
 const HERO_POSTER =
-  "https://res.cloudinary.com/v3bh8bz0/video/upload/so_20,q_auto:best,f_jpg/featured/grandstyle_clip_v2.jpg";
+  "https://res.cloudinary.com/v3bh8bz0/video/upload/so_0,q_auto:best,f_jpg/featured/grandstyle_final.jpg";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
