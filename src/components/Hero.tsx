@@ -162,38 +162,54 @@ const Hero = () => {
 
       {/* Feature image strip */}
       <div className="container-edge">
+        {/* Cinematic frame: dark matte, 2.39:1 scope crop, hairline border, corner marks */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.7, ease }}
-          className="relative aspect-[16/7] overflow-hidden bg-cloud"
+          className="relative bg-ink p-2 sm:p-3 md:p-4 shadow-[0_30px_80px_-30px_rgba(10,18,40,0.55)]"
         >
-          <video
-            className="absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={HERO_POSTER}
-            aria-hidden="true"
-          >
-            <source src={HERO_VIDEO} type="video/mp4" />
-          </video>
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 50% 40% at 0% 0%, rgba(10,18,40,0.85) 0%, rgba(10,18,40,0) 65%), linear-gradient(180deg, rgba(10,18,40,0.12) 0%, rgba(10,18,40,0) 40%, rgba(10,18,40,0.25) 100%)",
-            }}
-          />
-          <span className="absolute top-5 right-5 mono-kicker text-paper/80">
-            № 001 / Film
-          </span>
-          <span className="absolute left-5 bottom-5 mono-kicker text-paper bg-ink/80 border border-paper/30 px-3 py-2">
-            1,000-guest marquee setup · On location
-          </span>
+          <div className="relative aspect-[16/9] sm:aspect-[2.39/1] overflow-hidden bg-ink">
+            <video
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={HERO_POSTER}
+              aria-hidden="true"
+            >
+              <source src={HERO_VIDEO} type="video/mp4" />
+            </video>
+            {/* Soft, even vignette */}
+            <div
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse 120% 100% at 50% 50%, rgba(10,18,40,0) 55%, rgba(10,18,40,0.38) 100%)",
+              }}
+            />
+            {/* Hairline inner border */}
+            <div
+              aria-hidden
+              className="absolute inset-0 pointer-events-none border border-paper/15"
+            />
+            {/* Corner marks */}
+            {[
+              "top-3 left-3 border-t border-l",
+              "top-3 right-3 border-t border-r",
+              "bottom-3 left-3 border-b border-l",
+              "bottom-3 right-3 border-b border-r",
+            ].map((pos) => (
+              <span
+                key={pos}
+                aria-hidden
+                className={`absolute ${pos} w-4 h-4 md:w-5 md:h-5 border-paper/70 pointer-events-none`}
+              />
+            ))}
+          </div>
         </motion.div>
 
         {/* Caption row */}
